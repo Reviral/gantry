@@ -272,8 +272,17 @@
 
     <script>
         // --- CONFIG ---
-        const ADMIN_URL = "https://decimeter-easeful-replica.ngrok-free.dev/webhook-test/fbd452b7-90d9-4e01-941e-230f1c749e57";
-        const TRIAGE_URL = "https://decimeter-easeful-replica.ngrok-free.dev/webhook-test/2b5d00f6-a6f0-41e6-a3c2-6249dc8668bb";
+        // This checks if you are on your computer (localhost) or the web (GitHub)
+const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+
+// It automatically picks the right pipe!
+const ADMIN_URL = isLocal 
+    ? "https://decimeter-easeful-replica.ngrok-free.dev/webhook-test/fbd452b7-90d9-4e01-941e-230f1c749e57" 
+    : "https://decimeter-easeful-replica.ngrok-free.dev/webhook/fbd452b7-90d9-4e01-941e-230f1c749e57";
+
+const TRIAGE_URL = isLocal 
+    ? "https://decimeter-easeful-replica.ngrok-free.dev/webhook-test/2b5d00f6-a6f0-41e6-a3c2-6249dc8668bb" 
+    : "https://decimeter-easeful-replica.ngrok-free.dev/webhook/2b5d00f6-a6f0-41e6-a3c2-6249dc8668bb";
 
         // DEBUG: This must pop up on refresh!
         console.log("System Online");
