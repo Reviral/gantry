@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -87,7 +87,7 @@
         }
 
         .container {
-            max-width: 500px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -97,6 +97,7 @@
             border-radius: 12px;
             padding: 2rem;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
 
         .form-group {
@@ -113,22 +114,11 @@
         input, textarea, select {
             width: 100%;
             padding: 0.75rem;
-            border: 1.5px solid #cbd5e1; /* Darker, slightly thicker border */
-            background-color: #ffffff;
+            border: 1.5px solid #cbd5e1;
             border-radius: 8px;
             font-size: 1rem;
             box-sizing: border-box;
-            transition: border-color 0.2s, box-shadow 0.2s;
         }
-
-            /* This makes the box "glow" slightly when clicked */
-            input:focus, textarea:focus, select:focus {
-                outline: none;
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(11, 94, 215, 0.1);
-                background-color: #fff;
-            }
-        
 
         .btn {
             background: var(--primary);
@@ -155,58 +145,30 @@
             min-height: 1.5rem;
         }
 
-        .footer-link {
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 0.8rem;
-            color: var(--text-light);
+        #debugPanel {
+            background: #0f172a;
+            color: #e6eef8;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow: auto;
         }
 
-            .footer-link a {
-                color: var(--primary);
-                text-decoration: none;
-                font-weight: 600;
-            }
-        /* --- MOBILE RESPONSIVENESS --- */
-@media (max-width: 768px) {
-    .wrapper {
-        flex-direction: column; /* Stack sidebar above content */
-    }
-
-    .sidebar {
-        width: 100%; /* Take up full width */
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        flex-direction: row; /* Lay out buttons horizontally */
-        padding: 0.5rem;
-        gap: 0.25rem;
-        overflow-x: auto; /* Scroll links if they overflow */
-        box-sizing: border-box;
-    }
-
-    .sidebar a {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.85rem;
-        white-space: nowrap; /* Keep text on one line */
-    }
-
-    .main-content {
-        padding: 1rem; /* More room for the cards */
-    }
-
-    .container {
-        max-width: 100%; /* Let cards fill the screen width */
-    }
-
-    header {
-        padding: 0.5rem 1rem;
-    }
-
-    .brand {
-        font-size: 1rem;
-    }
-}
+        .qty-btn {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -215,55 +177,168 @@
 
     <div class="wrapper">
         <aside class="sidebar" id="adminSidebar" style="display:none">
-            <a id="nav-driver" class="active">Driver Management</a>
-            <a id="nav-status">Status Broadcast</a>
+            <a id="nav-fleet">Fleet Management</a>
+            <a id="nav-triage-log">Service History</a>
+            <a id="nav-timesheets">Hours & Mileage</a>
+            <a id="nav-status-board">Global Status Board</a>
             <div style="flex:1"></div>
             <a id="logout" style="color: var(--error)">Logout</a>
         </aside>
 
         <main class="main-content">
             <div class="container">
+
                 <section id="view-triage">
-                    <div class="card">
+                    <div class="card" style="max-width:500px; margin:auto;">
                         <h2>Service Intake</h2>
                         <div class="form-group"><label>Name</label><input id="in-triageName"></div>
+                        <div class="form-group"><label>Email</label><input id="in-triageEmail" placeholder="user@example.com"></div>
                         <div class="form-group"><label>Postcode</label><input id="in-triagePost"></div>
                         <div class="form-group"><label>Details</label><textarea id="in-triageMsg" rows="3"></textarea></div>
                         <button id="btn-triage" class="btn">Transmit to Gantry</button>
                         <div id="res-triage" class="status-msg"></div>
-                        <div class="footer-link">System Secured | <a id="link-login">Admin Login</a></div>
+                        <div style="text-align:center; margin-top:15px;">System Secured | <a id="link-login" style="color:var(--primary); cursor:pointer; font-weight:600;">Gantry Access</a></div>
                     </div>
                 </section>
 
                 <section id="view-login" style="display:none">
-                    <div class="card">
-                        <h2>Admin Access</h2>
-                        <div class="form-group"><label>Access Key</label><input id="in-pass" type="password"></div>
-                        <button id="btn-login" class="btn">Sign In</button>
+                    <div class="card" style="max-width:400px; margin:auto;">
+                        <h2>Gantry Login</h2>
+                        <form id="loginForm" onsubmit="return false;">
+                            <input type="text" name="username" value="driver" style="display:none" autocomplete="username">
+
+                            <div class="form-group">
+                                <label>Access Key</label>
+                                <input id="in-pass" type="password" autocomplete="current-password">
+                            </div>
+                            <button id="btn-login" class="btn" type="submit">Sign In</button>
+                        </form>
+                        <div style="text-align:center; margin-top:15px;">
+                            <a id="link-back-triage" style="color:var(--primary); cursor:pointer;">Back to Intake</a>
+                        </div>
                     </div>
                 </section>
 
-                <section id="view-driver" style="display:none">
+                <section id="view-triage-log" style="display:none">
                     <div class="card">
-                        <h2>Driver Profile</h2>
-                        <div class="form-group"><label>Full Name</label><input id="in-drName"></div>
-                        <div class="form-group"><label>Email</label><input id="in-drEmail"></div>
-                        <div class="form-group"><label>Mobile</label><input id="in-drMob"></div>
-                        <div class="form-group"><label>Slack ID</label><input id="in-drSlack"></div>
-                        <div class="form-group"><label>Van ID (e.g. 06)</label><input id="in-drVan"></div>
-                        <div class="form-group"><label>Postcode Area</label><input id="in-drPost"></div>
-                        <button id="btn-driver" class="btn">Sync to Gantry</button>
-                        <div id="res-driver" class="status-msg"></div>
+                        <h2>Service History (Triage Log)</h2>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                                <thead>
+                                    <tr style="text-align: left; border-bottom: 2px solid var(--border);">
+                                        <th style="padding: 10px;">Date</th>
+                                        <th style="padding: 10px;">Name</th>
+                                        <th style="padding: 10px;">Postcode</th>
+                                        <th style="padding: 10px;">Priority</th>
+                                        <th style="padding: 10px;">Summary</th>
+                                        <th style="padding: 10px;">Assignment</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="triage-log-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="view-fleet" style="display:none">
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <h3>⚠️ Low Stock Alerts</h3>
+                        <div id="low-stock-list"></div>
+                    </div>
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; gap:10px; flex-wrap:wrap;">
+                            <h2>Fleet Registry</h2>
+                            <div style="display:flex; gap:10px;">
+                                <input type="text" id="fleetSearch" placeholder="Filter Registry..." onkeyup="filterTable('fleet-registry-body', 'fleetSearch')"
+                                       style="padding:8px; border:1px solid var(--border); border-radius:5px; width:200px;">
+                                <button onclick="openDriverModal()" style="background:var(--success); color:white; padding:8px 15px; border:none; border-radius:5px; cursor:pointer; font-weight:600;">+ New Driver</button>
+                            </div>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table style="width:100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="text-align:left; border-bottom:2px solid var(--border); color:var(--text-light); font-size:0.85rem;">
+                                        <th style="padding:10px;">VAN ID</th>
+                                        <th style="padding:10px;">DRIVER</th>
+                                        <th style="padding:10px;">AREA</th>
+                                        <th style="padding:10px; text-align:right;">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fleet-registry-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="view-timesheets" style="display:none">
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; gap:10px; flex-wrap:wrap;">
+                            <h2>Mileage & Hours</h2>
+                            <input type="text" id="timeSearch" placeholder="Filter by Name or Date..." onkeyup="filterTable('timesheet-log-body', 'timeSearch')"
+                                   style="padding:8px; border:1px solid var(--border); border-radius:5px; width:250px;">
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="text-align: left; border-bottom: 2px solid var(--border); color:var(--text-light); font-size:0.85rem;">
+                                        <th style="padding: 10px;">DATE</th>
+                                        <th style="padding: 10px;">DRIVER</th>
+                                        <th style="padding: 10px;">START</th>
+                                        <th style="padding: 10px;">END</th>
+                                        <th style="padding: 10px;">HOURS</th>
+                                        <th style="padding: 10px;">MILES</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="timesheet-log-body"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
 
                 <section id="view-status" style="display:none">
                     <div class="card">
-                        <h2>Status Broadcast</h2>
-                        <div class="form-group"><label>Van ID (e.g. 06)</label><input id="in-stVan"></div>
-                        <div class="form-group"><label>Status Update</label><input id="in-stStatus"></div>
+                        <h2 id="status-header">Status Broadcast</h2>
+                        <div class="form-group"><label>Van ID</label><select id="in-stVan"></select></div>
+                        <div class="form-group"><label>Update Status</label><select id="in-stStatus"></select></div>
+                        <div class="form-group"><label>Current Mileage</label><input type="number" id="in-stMileage" placeholder="Required for log"></div>
                         <button id="btn-status" class="btn">Broadcast Update</button>
                         <div id="res-status" class="status-msg"></div>
+                        <button id="btn-go-inv" class="btn" style="background:var(--text-light); margin-top:10px;">View Van Inventory</button>
+                    </div>
+                </section>
+
+                <section id="view-inventory" style="display:none">
+                    <div class="card">
+                        <h2 id="inv-header">Van Inventory</h2>
+                        <div id="inventory-list"></div>
+                        <div class="form-group" style="margin-top:20px;"><label>Verify Mileage</label><input type="number" id="in-invMileage" placeholder="Required for log"></div>
+                        <button id="btn-save-inv" class="btn" style="margin-top:20px;">Sync Stock to Gantry</button>
+                        <button id="btn-back-status" class="btn" style="background:var(--text-light); margin-top:10px;">Back to Status</button>
+                    </div>
+                </section>
+
+                <section id="view-timesheets" style="display:none">
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; gap:10px; flex-wrap:wrap;">
+                            <h2>Mileage & Hours</h2>
+                            <input type="text" id="timeSearch" placeholder="Search Gareth, 19/04, etc..." onkeyup="filterTable('timesheet-log-body', 'timeSearch')"
+                                   style="padding:8px; border:1px solid var(--border); border-radius:5px; width:250px;">
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="text-align: left; border-bottom: 2px solid var(--border); color:var(--text-light); font-size:0.85rem;">
+                                        <th style="padding: 10px;">DATE</th>
+                                        <th style="padding: 10px;">DRIVER</th>
+                                        <th style="padding: 10px;">START</th>
+                                        <th style="padding: 10px;">END</th>
+                                        <th style="padding: 10px;">HOURS</th>
+                                        <th style="padding: 10px;">MILES</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="timesheet-log-body"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
             </div>
@@ -271,126 +346,361 @@
     </div>
 
     <script>
-        // --- CONFIG ---
-        // This checks if you are on your computer (localhost) or the web (GitHub)
-const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        const BASE_NGROK = "https://decimeter-easeful-replica.ngrok-free.dev";
+        const VANS_URL = `${BASE_NGROK}/webhook/33524e98-29ad-4ffb-b439-b3ebf50d00fd`;
+        const STATUS_URL = `${BASE_NGROK}/webhook/35a9c96a-4392-4b00-b8aa-c1f82bbfa2a3`;
+        const ADMIN_URL = `${BASE_NGROK}/webhook/fbd452b7-90d9-4e01-941e-230f1c749e57`;
+        const TRIAGE_URL = `${BASE_NGROK}/webhook/2b5d00f6-a6f0-41e6-a3c2-6249dc8668bb`;
+        const INVENTORY_URL = `${BASE_NGROK}/webhook/a7ab21d6-725d-445a-a0dd-b8fac91c43d1`;
+        const LOW_STOCK_URL = `${BASE_NGROK}/webhook/6434129a-29dc-4916-bf91-7575e299fa22`;
+        const TRIAGE_LOG_URL = `${BASE_NGROK}/webhook/d93e66d1-269d-431f-b8ac-46baf509a81b`;
+        const TIMESHEET_URL = `${BASE_NGROK}/webhook/3bd5686b-51b7-4ca1-8d9b-72847cd71de0`;
 
-// It automatically picks the right pipe!
-const ADMIN_URL = isLocal 
-    ? "https://decimeter-easeful-replica.ngrok-free.dev/webhook-test/fbd452b7-90d9-4e01-941e-230f1c749e57" 
-    : "https://decimeter-easeful-replica.ngrok-free.dev/webhook/fbd452b7-90d9-4e01-941e-230f1c749e57";
+        let gantryData = { vans: [] };
+        let activeVan = null;
+        window.activeDriverName = "";
 
-const TRIAGE_URL = isLocal 
-    ? "https://decimeter-easeful-replica.ngrok-free.dev/webhook-test/2b5d00f6-a6f0-41e6-a3c2-6249dc8668bb" 
-    : "https://decimeter-easeful-replica.ngrok-free.dev/webhook/2b5d00f6-a6f0-41e6-a3c2-6249dc8668bb";
+        function show(v) {
+            document.querySelectorAll('section').forEach(s => s.style.display = (s.id === v) ? 'block' : 'none');
+        }
 
-        // DEBUG: This must pop up on refresh!
-        console.log("System Online");
+        function logMsg(m) {
+            const log = document.getElementById('debugLog');
+            if (log) log.innerHTML = `<div>[${new Date().toLocaleTimeString()}] ${m}</div>` + log.innerHTML;
+            console.log("Gantry Log:", m);
+        }
 
-        // --- UPDATED VIEW CONTROLLER ---
-        function show(viewId, linkId) {
-            // 1. Toggle Sections
-            ['view-triage', 'view-login', 'view-driver', 'view-status'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = (id === viewId) ? 'block' : 'none';
+        // --- THE UNIVERSAL FILTER ---
+        function filterTable(tableId, inputId) {
+            const query = document.getElementById(inputId).value.toLowerCase();
+            const rows = document.querySelectorAll(`#${tableId} tr`);
+            rows.forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
             });
+        }
 
-            // 2. Toggle Sidebar Active State
-            document.querySelectorAll('.sidebar a').forEach(link => {
-                link.classList.remove('active');
+        // --- REGISTRY MANAGEMENT ---
+        function updateFleetRegistry() {
+            const body = document.getElementById('fleet-registry-body');
+            if (!body) return;
+            body.innerHTML = "";
+            gantryData.vans.forEach(v => {
+                if (!v['Van ID']) return;
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = "1px solid var(--border)";
+                tr.innerHTML = `
+                        <td style="padding:10px; font-weight:bold; color:var(--primary);">${v['Van ID']}</td>
+                        <td style="padding:10px;">${v['Driver Name']}</td>
+                        <td style="padding:10px;">${v['Postcode Area'] || '-'}</td>
+                        <td style="padding:10px; text-align:right;">
+                            <button onclick="openDriverModal('${v['Van ID']}')" style="background:none; border:none; cursor:pointer; font-size:1.1rem;">✏️</button>
+                            <button onclick="deleteDriver('${v['Van ID']}')" style="background:none; border:none; cursor:pointer; font-size:1.1rem; margin-left:10px;">🗑️</button>
+                        </td>
+                    `;
+                body.appendChild(tr);
             });
+        }
 
-            // Only add 'active' if a linkId was provided (skips triage/login views)
-            if (linkId) {
-                const activeLink = document.getElementById(linkId);
-                if (activeLink) activeLink.classList.add('active');
+        async function openDriverModal(existingId = null) {
+            // Default empty state
+            let driver = {
+                "Driver Name": "", "Van ID": "", "Password": "", "Postcode Area": "",
+                "Email": "", "Mobile": "", "Slack ID": "", "Status": "Offline"
+            };
+            let type = "add_driver";
+
+            if (existingId) {
+                // Find existing driver data to pre-fill prompts
+                const found = gantryData.vans.find(v => v['Van ID'] === existingId);
+                if (found) {
+                    driver = found;
+                    type = "edit_driver";
+                }
+            }
+
+            // PROMPTS: We pre-fill with current data to prevent accidental wiping
+            const name = prompt("Driver Name:", driver["Driver Name"] || "");
+            if (name === null) return; // Cancelled
+
+            const van = prompt("Van ID (e.g. V-08):", driver["Van ID"] || "");
+            if (van === null) return;
+
+            const pass = prompt("Login Password:", driver["Password"] || "");
+            const area = prompt("Postcode Area:", driver["Postcode Area"] || "");
+            const email = prompt("Email Address:", driver["Email"] || "");
+            const mobile = prompt("Mobile Number:", driver["Mobile"] || "");
+            const slack = prompt("Slack ID:", driver["Slack ID"] || "");
+
+            logMsg("Syncing Registry Change...");
+
+            // THE PAYLOAD: Keys match your n8n node configuration exactly
+            const payload = {
+                type: type,
+                vanId: van,
+                data: {
+                    "driverName": name,      // Matches $json.body.data["driverName"]
+                    "vanId": van,           // Matches $json.body.data["vanId"]
+                    "Password": pass,       // Matches $json.body.data.Password
+                    "Postcode Area": area,  // Matches $json.body.data["Postcode Area"]
+                    "Email": email,         // Matches $json.body.data.Email
+                    "Mobile": mobile,       // Matches $json.body.data.Mobile
+                    "Slack ID": slack,      // Matches $json.body.data["Slack ID"]
+                    "status": driver["Status"] || "Offline" // Preserves current status
+                }
+            };
+
+            const ok = await api(payload, ADMIN_URL);
+            if (ok) {
+                alert("✓ Registry Synchronized");
+                refreshData();
+            } else {
+                alert("❌ Sync Failed - Check n8n Switch Node");
             }
         }
 
-        // Updated Sidebar Listeners
-        document.getElementById('nav-driver').onclick = () => show('view-driver', 'nav-driver');
-        document.getElementById('nav-status').onclick = () => show('view-status', 'nav-status');
+        async function deleteDriver(id) {
+            if (!confirm(`Permanently remove ${id} from the Gantry?`)) return;
+            logMsg(`Deleting ${id}...`);
+            const ok = await api({ type: "delete_driver", vanId: id }, ADMIN_URL);
+            if (ok) { alert("✓ Driver Removed"); refreshData(); }
+        }
 
-        // Login/Triage Listeners (No sidebar highlights needed here)
-        document.getElementById('link-login').onclick = () => show('view-login');
-        document.getElementById('btn-login').onclick = () => {
-            if (document.getElementById('in-pass').value === 'admin') {
-                document.getElementById('adminSidebar').style.display = 'flex';
-                show('view-driver', 'nav-driver');
+        window.onload = () => {
+            logMsg("Gantry System Initializing...");
+            const DEBUG = true;
+
+            function debugLogMsg(m) {
+                if (!DEBUG) return;
+                const l = document.getElementById('debugLog');
+                if (l) l.innerHTML = `<div>[${new Date().toLocaleTimeString()}] ${m}</div>` + l.innerHTML;
+                else console.log(m);
             }
+
+            const b = (id, act) => {
+                const e = document.getElementById(id);
+                if (e) e.onclick = () => { debugLogMsg(`Button Clicked: ${id}`); act(); };
+            };
+
+            b('nav-fleet', () => { fetchLowStockAlerts(); show('view-fleet'); });
+            b('nav-triage-log', () => { fetchTriageLog(); show('view-triage-log'); });
+            b('nav-timesheets', () => { fetchTimesheets(); show('view-timesheets'); });
+            b('nav-status-board', () => show('view-status'));
+            b('logout', () => location.reload());
+            b('link-login', () => show('view-login'));
+            b('link-back-triage', () => show('view-triage'));
+            b('btn-refresh', () => refreshData());
+            b('btn-back-status', () => show('view-status'));
+
+            b('btn-go-inv', () => {
+                const selectedV = document.getElementById('in-stVan').value;
+                if (!selectedV) return alert('Please select a Van first');
+                activeVan = selectedV;
+                fetchInventory(selectedV);
+                show('view-inventory');
+            });
+
+            b('btn-status', async () => {
+                const v = document.getElementById('in-stVan').value, s = document.getElementById('in-stStatus').value, m = document.getElementById('in-stMileage').value;
+                if (!v || !s || !m) return alert("All fields required");
+                const ok = await api({ type: 'status_update', vanId: v, driverName: window.activeDriverName, status: s, mileage: m }, ADMIN_URL);
+                if (ok) { alert("✓ Status Broadcasted"); refreshData(); }
+            });
+
+            b('btn-save-inv', async () => {
+                const m = document.getElementById('in-invMileage').value;
+                if (!m) return alert("Mileage Required");
+                const items = [];
+                document.querySelectorAll('.inv-item').forEach(div => { items.push({ name: div.dataset.name, qty: div.querySelector('span').textContent }); });
+                const ok = await api({ type: 'inventory', vanId: activeVan, driverName: window.activeDriverName, updates: items, mileage: m }, ADMIN_URL);
+                if (ok) { alert("✓ Inventory Synced"); show('view-status'); }
+            });
+
+            b('btn-login', () => {
+                const p = document.getElementById('in-pass').value.trim();
+                if (p === 'admin') {
+                    document.getElementById('adminSidebar').style.display = 'flex';
+                    show('view-fleet');
+                    fetchLowStockAlerts();
+                    refreshData();
+                } else {
+                    const d = gantryData.vans.find(v => String(v.Password) === p);
+                    if (d) {
+                        activeVan = d['Van ID'];
+                        window.activeDriverName = d['Driver Name'];
+                        document.getElementById('status-header').textContent = `Cockpit: ${window.activeDriverName}`;
+                        const s = document.getElementById('in-stVan');
+                        s.innerHTML = '';
+                        s.add(new Option(`${d['Van ID']} | ${d['Driver Name']}`, d['Van ID']));
+                        show('view-status');
+                    } else { alert("Access Denied"); }
+                }
+            });
+
+            b('btn-inspect-van', () => {
+                const vID = document.getElementById('in-drVan').value;
+                if (!vID) return alert("Select a Van first");
+                activeVan = vID;
+                fetchInventory(vID);
+                show('view-inventory');
+            });
+
+            refreshData();
         };
 
-        document.getElementById('link-login').onclick = () => show('view-login');
-        document.getElementById('btn-login').onclick = () => {
-            if (document.getElementById('in-pass').value === 'admin') {
-                document.getElementById('adminSidebar').style.display = 'flex';
-                show('view-driver');
-            }
-        };
-        document.getElementById('nav-driver').onclick = () => show('view-driver');
-        document.getElementById('nav-status').onclick = () => show('view-status');
-        document.getElementById('logout').onclick = () => location.reload();
-
-        // --- API ENGINE ---
-        async function api(payload, resId, url) {
-            const out = document.getElementById(resId);
-            out.textContent = "Connecting...";
-            out.style.color = "orange";
-
+        async function refreshData() {
+            logMsg("Syncing Gantry Board...");
             try {
-                const r = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-                    body: JSON.stringify(payload)
+                const [vansRes, statsRes] = await Promise.all([
+                    fetch(VANS_URL, { headers: { 'ngrok-skip-browser-warning': 'true' } }),
+                    fetch(STATUS_URL, { headers: { 'ngrok-skip-browser-warning': 'true' } })
+                ]);
+                gantryData.vans = await vansRes.json();
+                const statusDefinitions = await statsRes.json();
+
+                const drV = document.getElementById('in-drVan'), stV = document.getElementById('in-stVan'), stS = document.getElementById('in-stStatus');
+                const isAdmin = document.getElementById('adminSidebar').style.display === 'flex';
+
+                if (drV) drV.innerHTML = '<option value="">-- Select Van --</option>';
+                if (stV) stV.innerHTML = '<option value="">-- Select Van --</option>';
+                if (stS) stS.innerHTML = '<option value="">-- Select Status --</option>';
+
+                gantryData.vans.forEach(v => {
+                    if (v['Van ID']) {
+                        const name = `${v['Van ID']} | ${v['Driver Name']}`;
+                        if (isAdmin && drV) drV.add(new Option(name, v['Van ID']));
+                        if (isAdmin || activeVan === v['Van ID'] || !activeVan) if (stV) stV.add(new Option(name, v['Van ID']));
+                    }
                 });
-                if (r.ok) {
-                    out.textContent = "✓ Gantry Synchronized";
-                    out.style.color = "green";
-                    document.querySelectorAll('input, textarea').forEach(i => i.value = '');
-                } else { throw new Error(); }
-            } catch (e) {
-                out.textContent = "❌ Connection Failed";
-                out.style.color = "red";
-            }
+
+                const items = Array.isArray(statusDefinitions) ? statusDefinitions : (statusDefinitions.items || []);
+                items.forEach(s => {
+                    const val = s['Status Name'] || s.Status || s.status || (typeof s === 'string' ? s : null);
+                    if (val) stS.add(new Option(val, val));
+                });
+
+                updateFleetRegistry();
+                logMsg("Gantry Synchronized.");
+            } catch (e) { logMsg("Sync Error."); console.error(e); }
         }
 
-        // --- BUTTON MAPPINGS ---
+        async function fetchTimesheets() {
+            const body = document.getElementById('timesheet-log-body');
+            if (!body) return;
+            body.innerHTML = "<tr><td colspan='6'>Harvesting...</td></tr>";
+            try {
+                const res = await fetch(TIMESHEET_URL, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+                const data = await res.json();
+                body.innerHTML = "";
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = "1px solid var(--border)";
+                    tr.innerHTML = `<td>${row.date}</td><td style="font-weight:600;">${row.driver}</td><td>${row.start}</td><td>${row.end}</td><td style="color:var(--primary); font-weight:bold;">${row.hours}h</td><td>${row.miles} mi</td>`;
+                    body.appendChild(tr);
+                });
+            } catch (e) { body.innerHTML = "<tr><td colspan='6'>Error loading history.</td></tr>"; }
+        }
 
-        // 1. Triage
-        document.getElementById('btn-triage').onclick = () => {
-            api({
-                table: 'Triage', data: {
-                    Name: document.getElementById('in-triageName').value,
-                    Postcode: document.getElementById('in-triagePost').value,
-                    Description: document.getElementById('in-triageMsg').value
+        async function fetchLowStockAlerts() {
+            try {
+                const res = await fetch(LOW_STOCK_URL, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+                const data = await res.json();
+                const list = document.getElementById('low-stock-list');
+                const alerts = data.allVans || [];
+                list.innerHTML = alerts.length ? "" : "<p>✓ All Vans Stocked</p>";
+                alerts.forEach(v => {
+                    const d = document.createElement('div');
+                    d.style = "padding:10px; background:#fff1f1; border:1px solid #fecaca; margin-bottom:5px; border-radius:5px; cursor:pointer;";
+                    d.onclick = () => { document.getElementById('in-drVan').value = v.vanId; document.getElementById('btn-inspect-van').click(); };
+                    d.innerHTML = `<strong>${v.driverName}</strong>: ${v.lowItemCount} items low`;
+                    list.appendChild(d);
+                });
+            } catch (e) { logMsg("Low Stock Sync Failed."); }
+        }
+
+        async function fetchTriageLog() {
+            const body = document.getElementById('triage-log-body');
+            if (!body) return;
+            body.innerHTML = "<tr><td colspan='6'>Accessing...</td></tr>";
+            try {
+                const res = await fetch(TRIAGE_LOG_URL, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+                const data = await res.json();
+                body.innerHTML = "";
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td style="padding:10px;">${item.Timestamp || '-'}</td><td style="padding:10px; font-weight:600;">${item.Name || '-'}</td><td style="padding:10px;">${item.Postcode || '-'}</td><td style="padding:10px;">${item.Priority || '-'}</td><td style="padding:10px;">${item.Summary || '-'}</td><td style="padding:10px;">${item.AssignedDriver || '-'}</td>`;
+                    body.appendChild(row);
+                });
+            } catch (e) { body.innerHTML = "<tr><td colspan='6'>Error loading history.</td></tr>"; }
+        }
+
+        async function fetchInventory(id) {
+            logMsg(`Accessing Inventory for ${id}...`);
+            try {
+                const res = await fetch(`${INVENTORY_URL}?vanId=${id}`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+                const rawData = await res.json();
+                const items = Array.isArray(rawData) ? rawData : (rawData.allVans || rawData.items || []);
+                const data = items.filter(item => String(item['Van ID'] || '').trim().toLowerCase() === String(id).trim().toLowerCase());
+                const list = document.getElementById('inventory-list');
+                list.innerHTML = data.length ? '' : '<p>No items found.</p>';
+                data.forEach((item, idx) => {
+                    const qty = parseInt(item.Qty) || 0, min = parseInt(item['Min Stock'] || 0);
+                    const color = (qty <= min) ? 'var(--error)' : 'var(--success)';
+                    const div = document.createElement('div');
+                    div.className = 'inv-item';
+                    div.dataset.name = item['Item Name'] || '';
+                    div.style = 'display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #eee;';
+                    div.innerHTML = `<div style="flex:1"><div style="font-weight:600">${item['Item Name']}</div><div style="font-size:0.8rem; color:var(--text-light)">Min: ${min}</div></div><div style="display:flex; align-items:center; gap:8px"><button class="qty-btn" onclick="uQ(${idx}, -1)">-</button><span id="q-${idx}" style="font-weight:900; width:48px; text-align:center; color:${color};">${qty}</span><button class="qty-btn" onclick="uQ(${idx}, 1)">+</button></div>`;
+                    list.appendChild(div);
+                });
+            } catch (e) { logMsg("Inventory Sync Failed."); }
+        }
+
+        function uQ(idx, delta) {
+            const el = document.getElementById(`q-${idx}`);
+            if (el) el.textContent = Math.max(0, parseInt(el.textContent || '0') + delta);
+        }
+
+        async function api(p, url) {
+            try {
+                // Try simple form POST first to avoid preflight
+                const params = new URLSearchParams();
+                Object.keys(p || {}).forEach(k => {
+                    const v = p[k];
+                    params.append(k, typeof v === 'object' ? JSON.stringify(v) : String(v));
+                });
+
+                let res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params.toString(),
+                    mode: 'cors'
+                });
+
+                let text = await res.text().catch(() => '');
+                let body = null;
+                try { body = text ? JSON.parse(text) : null; } catch {}
+                if (res.ok) return { ok: res.ok, status: res.status, body, text };
+
+                // If server explicitly rejects form data (400/415), try JSON
+                if (res.status === 400 || res.status === 415) {
+                    res = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+                        body: JSON.stringify(p),
+                        mode: 'cors'
+                    });
+                    text = await res.text().catch(() => '');
+                    body = null;
+                    try { body = text ? JSON.parse(text) : null; } catch {}
+                    return { ok: res.ok, status: res.status, body, text };
                 }
-            }, 'res-triage', TRIAGE_URL);
-        };
 
-        // 2. Driver Update (All fields restored)
-        document.getElementById('btn-driver').onclick = () => {
-            api({
-                table: 'Drivers', data: {
-                    'Driver Name': document.getElementById('in-drName').value,
-                    'Email': document.getElementById('in-drEmail').value,
-                    'Mobile': document.getElementById('in-drMob').value,
-                    'Slack ID': document.getElementById('in-drSlack').value,
-                    'Van ID': 'V-' + document.getElementById('in-drVan').value,
-                    'Postcode Area': document.getElementById('in-drPost').value
-                }
-            }, 'res-driver', ADMIN_URL);
-        };
-
-        // 3. Status Broadcast (Table-Aligned)
-        document.getElementById('btn-status').onclick = () => {
-            api({
-                table: 'Drivers', data: {
-                    'Van ID': 'V-' + document.getElementById('in-stVan').value,
-                    'Status': document.getElementById('in-stStatus').value
-                }
-            }, 'res-status', ADMIN_URL);
-        };
-
+                // Otherwise return the first response info
+                return { ok: res.ok, status: res.status, body, text };
+            } catch (e) {
+                return { ok: false, status: 0, body: null, text: e.message };
+            }
+        }
     </script>
 </body>
 </html>
