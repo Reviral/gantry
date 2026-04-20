@@ -15,10 +15,15 @@
             --border: #e2e8f0;
             --success: #22c55e;
             --error: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             margin: 0;
             background: var(--bg);
             color: var(--text);
@@ -27,6 +32,7 @@
             height: 100vh;
         }
 
+        /* Header */
         header {
             background: #fff;
             border-bottom: 1px solid var(--border);
@@ -44,6 +50,7 @@
             letter-spacing: -0.025em;
         }
 
+        /* Layout */
         .wrapper {
             display: flex;
             flex: 1;
@@ -58,6 +65,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            overflow-y: auto;
         }
 
             .sidebar a {
@@ -68,6 +76,9 @@
                 font-weight: 500;
                 transition: 0.2s;
                 cursor: pointer;
+                display: block;
+                border: none;
+                background: none;
             }
 
                 .sidebar a:hover {
@@ -80,6 +91,10 @@
                     color: #fff;
                 }
 
+        .sidebar-spacer {
+            flex: 1;
+        }
+
         .main-content {
             flex: 1;
             padding: 2rem;
@@ -91,13 +106,23 @@
             margin: 0 auto;
         }
 
+        /* Cards & Forms */
         .card {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .form-group {
@@ -117,9 +142,16 @@
             border: 1.5px solid #cbd5e1;
             border-radius: 8px;
             font-size: 1rem;
-            box-sizing: border-box;
+            font-family: inherit;
         }
 
+            input:focus, textarea:focus, select:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(11, 94, 215, 0.1);
+            }
+
+        /* Buttons */
         .btn {
             background: var(--primary);
             color: #fff;
@@ -130,31 +162,143 @@
             cursor: pointer;
             width: 100%;
             transition: 0.2s;
+            font-size: 1rem;
         }
 
             .btn:hover {
                 background: var(--primary-hover);
                 transform: translateY(-1px);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
             }
 
+            .btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+        .btn-secondary {
+            background: var(--text-light);
+            margin-top: 10px;
+        }
+
+        .btn-danger {
+            background: var(--error);
+        }
+
+            .btn-danger:hover {
+                background: #dc2626;
+            }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+            .btn-success:hover {
+                background: #16a34a;
+            }
+
+        .btn-sm {
+            padding: 8px 15px;
+            width: auto;
+            font-size: 0.875rem;
+        }
+
+        /* Status Messages */
         .status-msg {
             margin-top: 1rem;
             font-size: 0.875rem;
             font-weight: 600;
             text-align: center;
             min-height: 1.5rem;
+            padding: 0.5rem;
+            border-radius: 8px;
         }
 
-        #debugPanel {
-            background: #0f172a;
-            color: #e6eef8;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 12px;
-            font-family: monospace;
-            font-size: 12px;
-            max-height: 200px;
-            overflow: auto;
+            .status-msg.success {
+                background: #dcfce7;
+                color: #166534;
+            }
+
+            .status-msg.error {
+                background: #fee2e2;
+                color: #991b1b;
+            }
+
+            .status-msg.warning {
+                background: #fef3c7;
+                color: #92400e;
+            }
+
+            .status-msg.info {
+                background: #dbeafe;
+                color: #1e40af;
+            }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        thead tr {
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        th {
+            padding: 10px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody td {
+            padding: 10px;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Search Input */
+        .search-input {
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            width: 250px;
+        }
+
+        /* Low Stock Alerts */
+        .alert-item {
+            padding: 10px;
+            background: #fff1f1;
+            border: 1px solid #fecaca;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .alert-item:hover {
+                background: #fee2e2;
+            }
+
+        /* Quantity Controls */
+        .qty-control {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
         }
 
         .qty-btn {
@@ -168,12 +312,82 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
+            transition: 0.2s;
+        }
+
+            .qty-btn:hover {
+                background: var(--primary);
+                color: white;
+            }
+
+        /* Icons */
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-left: 10px;
+            transition: 0.2s;
+        }
+
+            .icon-btn:hover {
+                opacity: 0.7;
+            }
+
+        /* Modal (if needed) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+            .modal.show {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        /* Hidden */
+        section[style*="display:none"],
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
 <body>
 
-    <header><div class="brand">GANTRY // COMMAND</div></header>
+    <header>
+        <div class="brand">GANTRY // COMMAND</div>
+    </header>
 
     <div class="wrapper">
         <aside class="sidebar" id="adminSidebar" style="display:none">
@@ -181,35 +395,50 @@
             <a id="nav-triage-log">Service History</a>
             <a id="nav-timesheets">Hours & Mileage</a>
             <a id="nav-status-board">Global Status Board</a>
-            <div style="flex:1"></div>
-            <a id="logout" style="color: var(--error)">Logout</a>
+            <div class="sidebar-spacer"></div>
+            <a id="logout" style="color: var(--error);">Logout</a>
         </aside>
 
         <main class="main-content">
             <div class="container">
 
+                <!-- SERVICE INTAKE -->
                 <section id="view-triage">
                     <div class="card" style="max-width:500px; margin:auto;">
                         <h2>Service Intake</h2>
-                        <div class="form-group"><label>Name</label><input id="in-triageName"></div>
-                        <div class="form-group"><label>Email</label><input id="in-triageEmail" placeholder="user@example.com"></div>
-                        <div class="form-group"><label>Postcode</label><input id="in-triagePost"></div>
-                        <div class="form-group"><label>Details</label><textarea id="in-triageMsg" rows="3"></textarea></div>
+                        <div class="form-group">
+                            <label for="in-triageName">Name</label>
+                            <input id="in-triageName" type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="in-triageEmail">Email</label>
+                            <input id="in-triageEmail" type="email" placeholder="user@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="in-triagePost">Postcode</label>
+                            <input id="in-triagePost" type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="in-triageMsg">Details</label>
+                            <textarea id="in-triageMsg" rows="3" required></textarea>
+                        </div>
                         <button id="btn-triage" class="btn">Transmit to Gantry</button>
                         <div id="res-triage" class="status-msg"></div>
-                        <div style="text-align:center; margin-top:15px;">System Secured | <a id="link-login" style="color:var(--primary); cursor:pointer; font-weight:600;">Gantry Access</a></div>
+                        <div style="text-align:center; margin-top:15px;">
+                            System Secured | <a id="link-login" style="color:var(--primary); cursor:pointer; font-weight:600;">Gantry Access</a>
+                        </div>
                     </div>
                 </section>
 
+                <!-- LOGIN -->
                 <section id="view-login" style="display:none">
                     <div class="card" style="max-width:400px; margin:auto;">
                         <h2>Gantry Login</h2>
                         <form id="loginForm" onsubmit="return false;">
                             <input type="text" name="username" value="driver" style="display:none" autocomplete="username">
-
                             <div class="form-group">
-                                <label>Access Key</label>
-                                <input id="in-pass" type="password" autocomplete="current-password">
+                                <label for="in-pass">Access Key</label>
+                                <input id="in-pass" type="password" autocomplete="current-password" required>
                             </div>
                             <button id="btn-login" class="btn" type="submit">Sign In</button>
                         </form>
@@ -219,19 +448,20 @@
                     </div>
                 </section>
 
+                <!-- TRIAGE LOG -->
                 <section id="view-triage-log" style="display:none">
                     <div class="card">
                         <h2>Service History (Triage Log)</h2>
-                        <div style="overflow-x: auto;">
-                            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                        <div class="table-wrapper">
+                            <table>
                                 <thead>
-                                    <tr style="text-align: left; border-bottom: 2px solid var(--border);">
-                                        <th style="padding: 10px;">Date</th>
-                                        <th style="padding: 10px;">Name</th>
-                                        <th style="padding: 10px;">Postcode</th>
-                                        <th style="padding: 10px;">Priority</th>
-                                        <th style="padding: 10px;">Summary</th>
-                                        <th style="padding: 10px;">Assignment</th>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Name</th>
+                                        <th>Postcode</th>
+                                        <th>Priority</th>
+                                        <th>Summary</th>
+                                        <th>Assignment</th>
                                     </tr>
                                 </thead>
                                 <tbody id="triage-log-body"></tbody>
@@ -240,28 +470,28 @@
                     </div>
                 </section>
 
+                <!-- FLEET MANAGEMENT -->
                 <section id="view-fleet" style="display:none">
-                    <div class="card" style="margin-bottom: 1rem;">
+                    <div class="card">
                         <h3>⚠️ Low Stock Alerts</h3>
                         <div id="low-stock-list"></div>
                     </div>
                     <div class="card">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; gap:10px; flex-wrap:wrap;">
+                        <div class="card-header">
                             <h2>Fleet Registry</h2>
                             <div style="display:flex; gap:10px;">
-                                <input type="text" id="fleetSearch" placeholder="Filter Registry..." onkeyup="filterTable('fleet-registry-body', 'fleetSearch')"
-                                       style="padding:8px; border:1px solid var(--border); border-radius:5px; width:200px;">
-                                <button onclick="openDriverModal()" style="background:var(--success); color:white; padding:8px 15px; border:none; border-radius:5px; cursor:pointer; font-weight:600;">+ New Driver</button>
+                                <input type="text" id="fleetSearch" class="search-input" placeholder="Filter Registry...">
+                                <button id="btn-add-driver" class="btn btn-success btn-sm">+[...] Add</button>
                             </div>
                         </div>
-                        <div style="overflow-x: auto;">
-                            <table style="width:100%; border-collapse: collapse;">
+                        <div class="table-wrapper">
+                            <table>
                                 <thead>
-                                    <tr style="text-align:left; border-bottom:2px solid var(--border); color:var(--text-light); font-size:0.85rem;">
-                                        <th style="padding:10px;">VAN ID</th>
-                                        <th style="padding:10px;">DRIVER</th>
-                                        <th style="padding:10px;">AREA</th>
-                                        <th style="padding:10px; text-align:right;">ACTIONS</th>
+                                    <tr>
+                                        <th>VAN ID</th>
+                                        <th>DRIVER</th>
+                                        <th>AREA</th>
+                                        <th style="text-align:right;">ACTIONS</th>
                                     </tr>
                                 </thead>
                                 <tbody id="fleet-registry-body"></tbody>
@@ -270,23 +500,23 @@
                     </div>
                 </section>
 
+                <!-- TIMESHEETS -->
                 <section id="view-timesheets" style="display:none">
                     <div class="card">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; gap:10px; flex-wrap:wrap;">
+                        <div class="card-header">
                             <h2>Mileage & Hours</h2>
-                            <input type="text" id="timeSearch" placeholder="Filter by Name or Date..." onkeyup="filterTable('timesheet-log-body', 'timeSearch')"
-                                   style="padding:8px; border:1px solid var(--border); border-radius:5px; width:250px;">
+                            <input type="text" id="timeSearch" class="search-input" placeholder="Filter by Name or Date...">
                         </div>
-                        <div style="overflow-x: auto;">
-                            <table style="width: 100%; border-collapse: collapse;">
+                        <div class="table-wrapper">
+                            <table>
                                 <thead>
-                                    <tr style="text-align: left; border-bottom: 2px solid var(--border); color:var(--text-light); font-size:0.85rem;">
-                                        <th style="padding: 10px;">DATE</th>
-                                        <th style="padding: 10px;">DRIVER</th>
-                                        <th style="padding: 10px;">START</th>
-                                        <th style="padding: 10px;">END</th>
-                                        <th style="padding: 10px;">HOURS</th>
-                                        <th style="padding: 10px;">MILES</th>
+                                    <tr>
+                                        <th>DATE</th>
+                                        <th>DRIVER</th>
+                                        <th>START</th>
+                                        <th>END</th>
+                                        <th>HOURS</th>
+                                        <th>MILES</th>
                                     </tr>
                                 </thead>
                                 <tbody id="timesheet-log-body"></tbody>
@@ -295,132 +525,253 @@
                     </div>
                 </section>
 
+                <!-- STATUS BOARD -->
                 <section id="view-status" style="display:none">
                     <div class="card">
                         <h2 id="status-header">Status Broadcast</h2>
-                        <div class="form-group"><label>Van ID</label><select id="in-stVan"></select></div>
-                        <div class="form-group"><label>Update Status</label><select id="in-stStatus"></select></div>
-                        <div class="form-group"><label>Current Mileage</label><input type="number" id="in-stMileage" placeholder="Required for log"></div>
+                        <div class="form-group">
+                            <label for="in-stVan">Van ID</label>
+                            <select id="in-stVan"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="in-stStatus">Update Status</label>
+                            <select id="in-stStatus"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="in-stMileage">Current Mileage</label>
+                            <input type="number" id="in-stMileage" placeholder="Required for log">
+                        </div>
                         <button id="btn-status" class="btn">Broadcast Update</button>
                         <div id="res-status" class="status-msg"></div>
-                        <button id="btn-go-inv" class="btn" style="background:var(--text-light); margin-top:10px;">View Van Inventory</button>
+                        <button id="btn-go-inv" class="btn btn-secondary">View Van Inventory</button>
                     </div>
                 </section>
 
+                <!-- INVENTORY VIEW -->
                 <section id="view-inventory" style="display:none">
                     <div class="card">
                         <h2 id="inv-header">Van Inventory</h2>
                         <div id="inventory-list"></div>
-                        <div class="form-group" style="margin-top:20px;"><label>Verify Mileage</label><input type="number" id="in-invMileage" placeholder="Required for log"></div>
+                        <div class="form-group" style="margin-top:20px;">
+                            <label for="in-invMileage">Verify Mileage</label>
+                            <input type="number" id="in-invMileage" placeholder="Required for log">
+                        </div>
                         <button id="btn-save-inv" class="btn" style="margin-top:20px;">Sync Stock to Gantry</button>
-                        <button id="btn-back-status" class="btn" style="background:var(--text-light); margin-top:10px;">Back to Status</button>
+                        <button id="btn-back-status" class="btn btn-secondary">Back to Status</button>
                     </div>
                 </section>
 
-                <section id="view-timesheets" style="display:none">
-                    <div class="card">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; gap:10px; flex-wrap:wrap;">
-                            <h2>Mileage & Hours</h2>
-                            <input type="text" id="timeSearch" placeholder="Search Gareth, 19/04, etc..." onkeyup="filterTable('timesheet-log-body', 'timeSearch')"
-                                   style="padding:8px; border:1px solid var(--border); border-radius:5px; width:250px;">
-                        </div>
-                        <div style="overflow-x: auto;">
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <thead>
-                                    <tr style="text-align: left; border-bottom: 2px solid var(--border); color:var(--text-light); font-size:0.85rem;">
-                                        <th style="padding: 10px;">DATE</th>
-                                        <th style="padding: 10px;">DRIVER</th>
-                                        <th style="padding: 10px;">START</th>
-                                        <th style="padding: 10px;">END</th>
-                                        <th style="padding: 10px;">HOURS</th>
-                                        <th style="padding: 10px;">MILES</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="timesheet-log-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
             </div>
         </main>
     </div>
 
     <script>
-        const BASE_NGROK = "https://decimeter-easeful-replica.ngrok-free.dev";
-        const VANS_URL = `${BASE_NGROK}/webhook/33524e98-29ad-4ffb-b439-b3ebf50d00fd`;
-        const STATUS_URL = `${BASE_NGROK}/webhook/35a9c96a-4392-4b00-b8aa-c1f82bbfa2a3`;
-        const ADMIN_URL = `${BASE_NGROK}/webhook/fbd452b7-90d9-4e01-941e-230f1c749e57`;
-        const TRIAGE_URL = `${BASE_NGROK}/webhook/2b5d00f6-a6f0-41e6-a3c2-6249dc8668bb`;
-        const INVENTORY_URL = `${BASE_NGROK}/webhook/a7ab21d6-725d-445a-a0dd-b8fac91c43d1`;
-        const LOW_STOCK_URL = `${BASE_NGROK}/webhook/6434129a-29dc-4916-bf91-7575e299fa22`;
-        const TRIAGE_LOG_URL = `${BASE_NGROK}/webhook/d93e66d1-269d-431f-b8ac-46baf509a81b`;
-        const TIMESHEET_URL = `${BASE_NGROK}/webhook/3bd5686b-51b7-4ca1-8d9b-72847cd71de0`;
+        // ============================================
+        // CONFIGURATION & CONSTANTS
+        // ============================================
+        const CONFIG = {
+            API_BASE: "https://decimeter-easeful-replica.ngrok-free.dev",
+            DEBUG: true,
+            ENDPOINTS: {
+                VANS: "/webhook/33524e98-29ad-4ffb-b439-b3ebf50d00fd",
+                STATUS: "/webhook/35a9c96a-4392-4b00-b8aa-c1f82bbfa2a3",
+                ADMIN: "/webhook/fbd452b7-90d9-4e01-941e-230f1c749e57",
+                TRIAGE: "/webhook/2b5d00f6-a6f0-41e6-a3c2-6249dc8668bb",
+                INVENTORY: "/webhook/a7ab21d6-725d-445a-a0dd-b8fac91c43d1",
+                LOW_STOCK: "/webhook/6434129a-29dc-4916-bf91-7575e299fa22",
+                TRIAGE_LOG: "/webhook/d93e66d1-269d-431f-b8ac-46baf509a81b",
+                TIMESHEET: "/webhook/3bd5686b-51b7-4ca1-8d9b-72847cd71de0"
+            }
+        };
 
-        let gantryData = { vans: [] };
-        let activeVan = null;
-        window.activeDriverName = "";
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        const AppState = {
+            data: { vans: [] },
+            activeVan: null,
+            activeDriver: "",
+            isAdmin: false,
 
-        function show(v) {
-            document.querySelectorAll('section').forEach(s => s.style.display = (s.id === v) ? 'block' : 'none');
+            setActiveVan(vanId, driverName) {
+                this.activeVan = vanId;
+                this.activeDriver = driverName;
+            },
+
+            setAdmin(value) {
+                this.isAdmin = value;
+                document.getElementById('adminSidebar').style.display = value ? 'flex' : 'none';
+            },
+
+            reset() {
+                this.activeVan = null;
+                this.activeDriver = "";
+                this.isAdmin = false;
+                this.data = { vans: [] };
+            }
+        };
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+
+        /**
+         * Sanitize HTML to prevent XSS attacks
+         */
+        function sanitize(str) {
+            const div = document.createElement('div');
+            div.textContent = String(str || '');
+            return div.innerHTML;
         }
 
-        function logMsg(m) {
-            const log = document.getElementById('debugLog');
-            if (log) log.innerHTML = `<div>[${new Date().toLocaleTimeString()}] ${m}</div>` + log.innerHTML;
-            console.log("Gantry Log:", m);
+        /**
+         * Show status message with styling
+         */
+        function showStatus(elementId, message, type = 'info') {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            el.textContent = message;
+            el.className = `status-msg ${type}`;
         }
 
-        // --- THE UNIVERSAL FILTER ---
-        function filterTable(tableId, inputId) {
-            const query = document.getElementById(inputId).value.toLowerCase();
-            const rows = document.querySelectorAll(`#${tableId} tr`);
-            rows.forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+        /**
+         * Show/hide sections
+         */
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(s => {
+                s.style.display = s.id === sectionId ? 'block' : 'none';
+            });
+            if (CONFIG.DEBUG) console.log(`Showing section: ${sectionId}`);
+        }
+
+        /**
+         * Log messages
+         */
+        function log(message) {
+            if (CONFIG.DEBUG) {
+                console.log(`[Gantry] ${message}`);
+            }
+        }
+
+        /**
+         * Universal table filter
+         */
+        function setupTableFilter(inputId, tableId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+
+            input.addEventListener('keyup', () => {
+                const query = input.value.toLowerCase();
+                const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+                rows.forEach(row => {
+                    row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+                });
             });
         }
 
-        // --- REGISTRY MANAGEMENT ---
-        function updateFleetRegistry() {
+        /**
+         * Make API calls with proper error handling
+         */
+        async function api(payload, endpoint) {
+            const url = CONFIG.API_BASE + endpoint;
+            try {
+                log(`API Call: ${endpoint}`);
+
+                // Try form-encoded first (avoid preflight)
+                const params = new URLSearchParams();
+                Object.keys(payload || {}).forEach(k => {
+                    const v = payload[k];
+                    params.append(k, typeof v === 'object' ? JSON.stringify(v) : String(v));
+                });
+
+                let response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params.toString(),
+                    mode: 'cors'
+                });
+
+                if (!response.ok && (response.status === 400 || response.status === 415)) {
+                    // Retry with JSON if form-encoded fails
+                    response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'ngrok-skip-browser-warning': 'true'
+                        },
+                        body: JSON.stringify(payload),
+                        mode: 'cors'
+                    });
+                }
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json().catch(() => ({}));
+                log(`API Success: ${endpoint}`);
+                return { ok: true, data };
+            } catch (error) {
+                log(`API Error: ${endpoint} - ${error.message}`);
+                return { ok: false, error: error.message };
+            }
+        }
+
+        // ============================================
+        // FLEET MANAGEMENT
+        // ============================================
+
+        async function updateFleetRegistry() {
             const body = document.getElementById('fleet-registry-body');
             if (!body) return;
-            body.innerHTML = "";
-            gantryData.vans.forEach(v => {
-                if (!v['Van ID']) return;
+
+            body.innerHTML = '';
+            AppState.data.vans.forEach(van => {
+                if (!van['Van ID']) return;
+
                 const tr = document.createElement('tr');
-                tr.style.borderBottom = "1px solid var(--border)";
+                const vanId = sanitize(van['Van ID']);
+                const driverName = sanitize(van['Driver Name']);
+                const area = sanitize(van['Postcode Area'] || '-');
+
                 tr.innerHTML = `
-                        <td style="padding:10px; font-weight:bold; color:var(--primary);">${v['Van ID']}</td>
-                        <td style="padding:10px;">${v['Driver Name']}</td>
-                        <td style="padding:10px;">${v['Postcode Area'] || '-'}</td>
-                        <td style="padding:10px; text-align:right;">
-                            <button onclick="openDriverModal('${v['Van ID']}')" style="background:none; border:none; cursor:pointer; font-size:1.1rem;">✏️</button>
-                            <button onclick="deleteDriver('${v['Van ID']}')" style="background:none; border:none; cursor:pointer; font-size:1.1rem; margin-left:10px;">🗑️</button>
-                        </td>
-                    `;
+                            <td style="font-weight:bold; color:var(--primary);">${vanId}</td>
+                            <td>${driverName}</td>
+                            <td>${area}</td>
+                            <td style="text-align:right;">
+                                <button class="icon-btn" onclick="openDriverModal('${van['Van ID']}')">✏️</button>
+                                <button class="icon-btn" onclick="deleteDriver('${van['Van ID']}')">🗑️</button>
+                            </td>
+                        `;
                 body.appendChild(tr);
             });
         }
 
         async function openDriverModal(existingId = null) {
-            // Default empty state
             let driver = {
-                "Driver Name": "", "Van ID": "", "Password": "", "Postcode Area": "",
-                "Email": "", "Mobile": "", "Slack ID": "", "Status": "Offline"
+                "Driver Name": "",
+                "Van ID": "",
+                "Password": "",
+                "Postcode Area": "",
+                "Email": "",
+                "Mobile": "",
+                "Slack ID": "",
+                "Status": "Offline"
             };
+
             let type = "add_driver";
 
             if (existingId) {
-                // Find existing driver data to pre-fill prompts
-                const found = gantryData.vans.find(v => v['Van ID'] === existingId);
+                const found = AppState.data.vans.find(v => v['Van ID'] === existingId);
                 if (found) {
                     driver = found;
                     type = "edit_driver";
                 }
             }
 
-            // PROMPTS: We pre-fill with current data to prevent accidental wiping
+            // Prompt user for driver details
             const name = prompt("Driver Name:", driver["Driver Name"] || "");
-            if (name === null) return; // Cancelled
+            if (name === null) return;
 
             const van = prompt("Van ID (e.g. V-08):", driver["Van ID"] || "");
             if (van === null) return;
@@ -431,276 +782,514 @@
             const mobile = prompt("Mobile Number:", driver["Mobile"] || "");
             const slack = prompt("Slack ID:", driver["Slack ID"] || "");
 
-            logMsg("Syncing Registry Change...");
+            log("Syncing Registry Change...");
 
-            // THE PAYLOAD: Keys match your n8n node configuration exactly
             const payload = {
                 type: type,
                 vanId: van,
                 data: {
-                    "driverName": name,      // Matches $json.body.data["driverName"]
-                    "vanId": van,           // Matches $json.body.data["vanId"]
-                    "Password": pass,       // Matches $json.body.data.Password
-                    "Postcode Area": area,  // Matches $json.body.data["Postcode Area"]
-                    "Email": email,         // Matches $json.body.data.Email
-                    "Mobile": mobile,       // Matches $json.body.data.Mobile
-                    "Slack ID": slack,      // Matches $json.body.data["Slack ID"]
-                    "status": driver["Status"] || "Offline" // Preserves current status
+                    driverName: name,
+                    vanId: van,
+                    Password: pass,
+                    "Postcode Area": area,
+                    Email: email,
+                    Mobile: mobile,
+                    "Slack ID": slack,
+                    status: driver["Status"] || "Offline"
                 }
             };
 
-            const ok = await api(payload, ADMIN_URL);
-            if (ok) {
+            const result = await api(payload, CONFIG.ENDPOINTS.ADMIN);
+            if (result.ok) {
                 alert("✓ Registry Synchronized");
                 refreshData();
             } else {
-                alert("❌ Sync Failed - Check n8n Switch Node");
+                alert(`❌ Sync Failed: ${result.error}`);
             }
         }
 
         async function deleteDriver(id) {
-            if (!confirm(`Permanently remove ${id} from the Gantry?`)) return;
-            logMsg(`Deleting ${id}...`);
-            const ok = await api({ type: "delete_driver", vanId: id }, ADMIN_URL);
-            if (ok) { alert("✓ Driver Removed"); refreshData(); }
+            if (!confirm(`Permanently remove ${sanitize(id)} from the Gantry?`)) return;
+            log(`Deleting ${id}...`);
+
+            const result = await api({ type: "delete_driver", vanId: id }, CONFIG.ENDPOINTS.ADMIN);
+            if (result.ok) {
+                alert("✓ Driver Removed");
+                refreshData();
+            } else {
+                alert(`❌ Delete Failed: ${result.error}`);
+            }
         }
 
-        window.onload = () => {
-            logMsg("Gantry System Initializing...");
-            const DEBUG = true;
-
-            function debugLogMsg(m) {
-                if (!DEBUG) return;
-                const l = document.getElementById('debugLog');
-                if (l) l.innerHTML = `<div>[${new Date().toLocaleTimeString()}] ${m}</div>` + l.innerHTML;
-                else console.log(m);
-            }
-
-            const b = (id, act) => {
-                const e = document.getElementById(id);
-                if (e) e.onclick = () => { debugLogMsg(`Button Clicked: ${id}`); act(); };
-            };
-
-            b('nav-fleet', () => { fetchLowStockAlerts(); show('view-fleet'); });
-            b('nav-triage-log', () => { fetchTriageLog(); show('view-triage-log'); });
-            b('nav-timesheets', () => { fetchTimesheets(); show('view-timesheets'); });
-            b('nav-status-board', () => show('view-status'));
-            b('logout', () => location.reload());
-            b('link-login', () => show('view-login'));
-            b('link-back-triage', () => show('view-triage'));
-            b('btn-refresh', () => refreshData());
-            b('btn-back-status', () => show('view-status'));
-
-            b('btn-go-inv', () => {
-                const selectedV = document.getElementById('in-stVan').value;
-                if (!selectedV) return alert('Please select a Van first');
-                activeVan = selectedV;
-                fetchInventory(selectedV);
-                show('view-inventory');
-            });
-
-            b('btn-status', async () => {
-                const v = document.getElementById('in-stVan').value, s = document.getElementById('in-stStatus').value, m = document.getElementById('in-stMileage').value;
-                if (!v || !s || !m) return alert("All fields required");
-                const ok = await api({ type: 'status_update', vanId: v, driverName: window.activeDriverName, status: s, mileage: m }, ADMIN_URL);
-                if (ok) { alert("✓ Status Broadcasted"); refreshData(); }
-            });
-
-            b('btn-save-inv', async () => {
-                const m = document.getElementById('in-invMileage').value;
-                if (!m) return alert("Mileage Required");
-                const items = [];
-                document.querySelectorAll('.inv-item').forEach(div => { items.push({ name: div.dataset.name, qty: div.querySelector('span').textContent }); });
-                const ok = await api({ type: 'inventory', vanId: activeVan, driverName: window.activeDriverName, updates: items, mileage: m }, ADMIN_URL);
-                if (ok) { alert("✓ Inventory Synced"); show('view-status'); }
-            });
-
-            b('btn-login', () => {
-                const p = document.getElementById('in-pass').value.trim();
-                if (p === 'admin') {
-                    document.getElementById('adminSidebar').style.display = 'flex';
-                    show('view-fleet');
-                    fetchLowStockAlerts();
-                    refreshData();
-                } else {
-                    const d = gantryData.vans.find(v => String(v.Password) === p);
-                    if (d) {
-                        activeVan = d['Van ID'];
-                        window.activeDriverName = d['Driver Name'];
-                        document.getElementById('status-header').textContent = `Cockpit: ${window.activeDriverName}`;
-                        const s = document.getElementById('in-stVan');
-                        s.innerHTML = '';
-                        s.add(new Option(`${d['Van ID']} | ${d['Driver Name']}`, d['Van ID']));
-                        show('view-status');
-                    } else { alert("Access Denied"); }
-                }
-            });
-
-            b('btn-inspect-van', () => {
-                const vID = document.getElementById('in-drVan').value;
-                if (!vID) return alert("Select a Van first");
-                activeVan = vID;
-                fetchInventory(vID);
-                show('view-inventory');
-            });
-
-            refreshData();
-        };
+        // ============================================
+        // DATA FETCHING & SYNCHRONIZATION
+        // ============================================
 
         async function refreshData() {
-            logMsg("Syncing Gantry Board...");
+            log("Syncing Gantry Board...");
             try {
-                const [vansRes, statsRes] = await Promise.all([
-                    fetch(VANS_URL, { headers: { 'ngrok-skip-browser-warning': 'true' } }),
-                    fetch(STATUS_URL, { headers: { 'ngrok-skip-browser-warning': 'true' } })
+                const [vansRes, statusRes] = await Promise.all([
+                    fetch(`${CONFIG.API_BASE}${CONFIG.ENDPOINTS.VANS}`, {
+                        headers: { 'ngrok-skip-browser-warning': 'true' }
+                    }),
+                    fetch(`${CONFIG.API_BASE}${CONFIG.ENDPOINTS.STATUS}`, {
+                        headers: { 'ngrok-skip-browser-warning': 'true' }
+                    })
                 ]);
-                gantryData.vans = await vansRes.json();
-                const statusDefinitions = await statsRes.json();
 
-                const drV = document.getElementById('in-drVan'), stV = document.getElementById('in-stVan'), stS = document.getElementById('in-stStatus');
-                const isAdmin = document.getElementById('adminSidebar').style.display === 'flex';
+                if (!vansRes.ok || !statusRes.ok) {
+                    throw new Error('Failed to fetch data');
+                }
 
-                if (drV) drV.innerHTML = '<option value="">-- Select Van --</option>';
-                if (stV) stV.innerHTML = '<option value="">-- Select Van --</option>';
-                if (stS) stS.innerHTML = '<option value="">-- Select Status --</option>';
+                AppState.data.vans = await vansRes.json();
+                const statusDefinitions = await statusRes.json();
 
-                gantryData.vans.forEach(v => {
+                // Update dropdowns
+                updateVanSelects();
+                updateStatusSelect(statusDefinitions);
+                updateFleetRegistry();
+
+                log("Gantry Synchronized.");
+            } catch (error) {
+                log(`Sync Error: ${error.message}`);
+                console.error(error);
+            }
+        }
+
+        function updateVanSelects() {
+            const drV = document.getElementById('in-drVan');
+            const stV = document.getElementById('in-stVan');
+
+            if (stV) {
+                stV.innerHTML = '<option value="">-- Select Van --</option>';
+                AppState.data.vans.forEach(v => {
                     if (v['Van ID']) {
-                        const name = `${v['Van ID']} | ${v['Driver Name']}`;
-                        if (isAdmin && drV) drV.add(new Option(name, v['Van ID']));
-                        if (isAdmin || activeVan === v['Van ID'] || !activeVan) if (stV) stV.add(new Option(name, v['Van ID']));
+                        const name = `${sanitize(v['Van ID'])} | ${sanitize(v['Driver Name'])}`;
+                        const option = new Option(name, v['Van ID']);
+                        stV.add(option);
                     }
                 });
+            }
 
-                const items = Array.isArray(statusDefinitions) ? statusDefinitions : (statusDefinitions.items || []);
-                items.forEach(s => {
-                    const val = s['Status Name'] || s.Status || s.status || (typeof s === 'string' ? s : null);
-                    if (val) stS.add(new Option(val, val));
+            if (drV && AppState.isAdmin) {
+                drV.innerHTML = '<option value="">-- Select Van --</option>';
+                AppState.data.vans.forEach(v => {
+                    if (v['Van ID']) {
+                        const name = `${sanitize(v['Van ID'])} | ${sanitize(v['Driver Name'])}`;
+                        const option = new Option(name, v['Van ID']);
+                        drV.add(option);
+                    }
                 });
+            }
+        }
 
-                updateFleetRegistry();
-                logMsg("Gantry Synchronized.");
-            } catch (e) { logMsg("Sync Error."); console.error(e); }
+        function updateStatusSelect(statusDefinitions) {
+            const stS = document.getElementById('in-stStatus');
+            if (!stS) return;
+
+            stS.innerHTML = '<option value="">-- Select Status --</option>';
+            const items = Array.isArray(statusDefinitions) ? statusDefinitions : (statusDefinitions.items || []);
+
+            items.forEach(s => {
+                const val = s['Status Name'] || s.Status || s.status || (typeof s === 'string' ? s : null);
+                if (val) {
+                    const option = new Option(sanitize(val), sanitize(val));
+                    stS.add(option);
+                }
+            });
         }
 
         async function fetchTimesheets() {
             const body = document.getElementById('timesheet-log-body');
             if (!body) return;
-            body.innerHTML = "<tr><td colspan='6'>Harvesting...</td></tr>";
+
+            body.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+
             try {
-                const res = await fetch(TIMESHEET_URL, { headers: { 'ngrok-skip-browser-warning': 'true' } });
-                const data = await res.json();
-                body.innerHTML = "";
+                const response = await fetch(`${CONFIG.API_BASE}${CONFIG.ENDPOINTS.TIMESHEET}`, {
+                    headers: { 'ngrok-skip-browser-warning': 'true' }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch timesheets');
+
+                const data = await response.json();
+                body.innerHTML = '';
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    body.innerHTML = '<tr><td colspan="6" style="text-align:center;">No data available</td></tr>';
+                    return;
+                }
+
                 data.forEach(row => {
                     const tr = document.createElement('tr');
-                    tr.style.borderBottom = "1px solid var(--border)";
-                    tr.innerHTML = `<td>${row.date}</td><td style="font-weight:600;">${row.driver}</td><td>${row.start}</td><td>${row.end}</td><td style="color:var(--primary); font-weight:bold;">${row.hours}h</td><td>${row.miles} mi</td>`;
+                    tr.innerHTML = `
+                                <td>${sanitize(row.date)}</td>
+                                <td style="font-weight:600;">${sanitize(row.driver)}</td>
+                                <td>${sanitize(row.start)}</td>
+                                <td>${sanitize(row.end)}</td>
+                                <td style="color:var(--primary); font-weight:bold;">${sanitize(row.hours)}h</td>
+                                <td>${sanitize(row.miles)} mi</td>
+                            `;
                     body.appendChild(tr);
                 });
-            } catch (e) { body.innerHTML = "<tr><td colspan='6'>Error loading history.</td></tr>"; }
+            } catch (error) {
+                log(`Error fetching timesheets: ${error.message}`);
+                body.innerHTML = '<tr><td colspan="6" style="text-align:center;">Error loading history.</td></tr>';
+            }
         }
 
         async function fetchLowStockAlerts() {
             try {
-                const res = await fetch(LOW_STOCK_URL, { headers: { 'ngrok-skip-browser-warning': 'true' } });
-                const data = await res.json();
+                const response = await fetch(`${CONFIG.API_BASE}${CONFIG.ENDPOINTS.LOW_STOCK}`, {
+                    headers: { 'ngrok-skip-browser-warning': 'true' }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch alerts');
+
+                const data = await response.json();
                 const list = document.getElementById('low-stock-list');
                 const alerts = data.allVans || [];
-                list.innerHTML = alerts.length ? "" : "<p>✓ All Vans Stocked</p>";
+
+                if (alerts.length === 0) {
+                    list.innerHTML = '<p style="color: var(--success);">✓ All Vans Stocked</p>';
+                    return;
+                }
+
+                list.innerHTML = '';
                 alerts.forEach(v => {
-                    const d = document.createElement('div');
-                    d.style = "padding:10px; background:#fff1f1; border:1px solid #fecaca; margin-bottom:5px; border-radius:5px; cursor:pointer;";
-                    d.onclick = () => { document.getElementById('in-drVan').value = v.vanId; document.getElementById('btn-inspect-van').click(); };
-                    d.innerHTML = `<strong>${v.driverName}</strong>: ${v.lowItemCount} items low`;
-                    list.appendChild(d);
+                    const div = document.createElement('div');
+                    div.className = 'alert-item';
+                    div.innerHTML = `<strong>${sanitize(v.driverName)}</strong>: ${sanitize(v.lowItemCount)} items low`;
+                    div.onclick = () => {
+                        const drVan = document.getElementById('in-drVan');
+                        if (drVan) {
+                            drVan.value = v.vanId;
+                            document.getElementById('btn-inspect-van')?.click();
+                        }
+                    };
+                    list.appendChild(div);
                 });
-            } catch (e) { logMsg("Low Stock Sync Failed."); }
+            } catch (error) {
+                log(`Error fetching low stock alerts: ${error.message}`);
+                document.getElementById('low-stock-list').innerHTML = '<p style="color: var(--error);">Failed to load alerts</p>';
+            }
         }
 
         async function fetchTriageLog() {
             const body = document.getElementById('triage-log-body');
             if (!body) return;
-            body.innerHTML = "<tr><td colspan='6'>Accessing...</td></tr>";
+
+            body.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+
             try {
-                const res = await fetch(TRIAGE_LOG_URL, { headers: { 'ngrok-skip-browser-warning': 'true' } });
-                const data = await res.json();
-                body.innerHTML = "";
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td style="padding:10px;">${item.Timestamp || '-'}</td><td style="padding:10px; font-weight:600;">${item.Name || '-'}</td><td style="padding:10px;">${item.Postcode || '-'}</td><td style="padding:10px;">${item.Priority || '-'}</td><td style="padding:10px;">${item.Summary || '-'}</td><td style="padding:10px;">${item.AssignedDriver || '-'}</td>`;
-                    body.appendChild(row);
+                const response = await fetch(`${CONFIG.API_BASE}${CONFIG.ENDPOINTS.TRIAGE_LOG}`, {
+                    headers: { 'ngrok-skip-browser-warning': 'true' }
                 });
-            } catch (e) { body.innerHTML = "<tr><td colspan='6'>Error loading history.</td></tr>"; }
+
+                if (!response.ok) throw new Error('Failed to fetch triage log');
+
+                const data = await response.json();
+                body.innerHTML = '';
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    body.innerHTML = '<tr><td colspan="6" style="text-align:center;">No data available</td></tr>';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                                <td>${sanitize(item.Timestamp || '-')}</td>
+                                <td style="font-weight:600;">${sanitize(item.Name || '-')}</td>
+                                <td>${sanitize(item.Postcode || '-')}</td>
+                                <td>${sanitize(item.Priority || '-')}</td>
+                                <td>${sanitize(item.Summary || '-')}</td>
+                                <td>${sanitize(item.Assignment || '-')}</td>
+                            `;
+                    body.appendChild(tr);
+                });
+            } catch (error) {
+                log(`Error fetching triage log: ${error.message}`);
+                body.innerHTML = '<tr><td colspan="6" style="text-align:center;">Error loading history.</td></tr>';
+            }
         }
 
         async function fetchInventory(id) {
-            logMsg(`Accessing Inventory for ${id}...`);
+            log(`Accessing Inventory for ${id}...`);
+            const list = document.getElementById('inventory-list');
+            if (!list) return;
+
+            list.innerHTML = '<p style="text-align:center;">Loading...</p>';
+
             try {
-                const res = await fetch(`${INVENTORY_URL}?vanId=${id}`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
-                const rawData = await res.json();
+                const response = await fetch(`${CONFIG.API_BASE}${CONFIG.ENDPOINTS.INVENTORY}?vanId=${encodeURIComponent(id)}`, {
+                    headers: { 'ngrok-skip-browser-warning': 'true' }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch inventory');
+
+                const rawData = await response.json();
                 const items = Array.isArray(rawData) ? rawData : (rawData.allVans || rawData.items || []);
-                const data = items.filter(item => String(item['Van ID'] || '').trim().toLowerCase() === String(id).trim().toLowerCase());
-                const list = document.getElementById('inventory-list');
-                list.innerHTML = data.length ? '' : '<p>No items found.</p>';
-                data.forEach((item, idx) => {
-                    const qty = parseInt(item.Qty) || 0, min = parseInt(item['Min Stock'] || 0);
-                    const color = (qty <= min) ? 'var(--error)' : 'var(--success)';
-                    const div = document.createElement('div');
-                    div.className = 'inv-item';
-                    div.dataset.name = item['Item Name'] || '';
-                    div.style = 'display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #eee;';
-                    div.innerHTML = `<div style="flex:1"><div style="font-weight:600">${item['Item Name']}</div><div style="font-size:0.8rem; color:var(--text-light)">Min: ${min}</div></div><div style="display:flex; align-items:center; gap:8px"><button class="qty-btn" onclick="uQ(${idx}, -1)">-</button><span id="q-${idx}" style="font-weight:900; width:48px; text-align:center; color:${color};">${qty}</span><button class="qty-btn" onclick="uQ(${idx}, 1)">+</button></div>`;
-                    list.appendChild(div);
-                });
-            } catch (e) { logMsg("Inventory Sync Failed."); }
-        }
+                const filtered = items.filter(item =>
+                    String(item['Van ID'] || '').trim().toLowerCase() === String(id).trim().toLowerCase()
+                );
 
-        function uQ(idx, delta) {
-            const el = document.getElementById(`q-${idx}`);
-            if (el) el.textContent = Math.max(0, parseInt(el.textContent || '0') + delta);
-        }
+                list.innerHTML = '';
 
-        async function api(p, url) {
-            try {
-                // Try simple form POST first to avoid preflight
-                const params = new URLSearchParams();
-                Object.keys(p || {}).forEach(k => {
-                    const v = p[k];
-                    params.append(k, typeof v === 'object' ? JSON.stringify(v) : String(v));
-                });
-
-                let res = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: params.toString(),
-                    mode: 'cors'
-                });
-
-                let text = await res.text().catch(() => '');
-                let body = null;
-                try { body = text ? JSON.parse(text) : null; } catch {}
-                if (res.ok) return { ok: res.ok, status: res.status, body, text };
-
-                // If server explicitly rejects form data (400/415), try JSON
-                if (res.status === 400 || res.status === 415) {
-                    res = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-                        body: JSON.stringify(p),
-                        mode: 'cors'
-                    });
-                    text = await res.text().catch(() => '');
-                    body = null;
-                    try { body = text ? JSON.parse(text) : null; } catch {}
-                    return { ok: res.ok, status: res.status, body, text };
+                if (filtered.length === 0) {
+                    list.innerHTML = '<p style="text-align:center;">No items found.</p>';
+                    return;
                 }
 
-                // Otherwise return the first response info
-                return { ok: res.ok, status: res.status, body, text };
-            } catch (e) {
-                return { ok: false, status: 0, body: null, text: e.message };
+                filtered.forEach((item, idx) => {
+                    const qty = parseInt(item.Qty) || 0;
+                    const min = parseInt(item['Min Stock'] || 0);
+                    const color = qty <= min ? 'var(--error)' : 'var(--success)';
+
+                    const div = document.createElement('div');
+                    div.className = 'qty-control';
+                    div.dataset.name = item['Item Name'] || '';
+                    div.dataset.index = idx;
+
+                    div.innerHTML = `
+                                <div>
+                                    <div style="font-weight:600;">${sanitize(item['Item Name'])}</div>
+                                    <div style="font-size:0.8rem; color:var(--text-light)">Min: ${sanitize(min)}</div>
+                                </div>
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                    <button class="qty-btn" onclick="uQ(${idx}, -1)">−</button>
+                                    <span id="q-${idx}" style="min-width:40px; text-align:center; font-weight:bold; color:${color};">${qty}</span>
+                                    <button class="qty-btn" onclick="uQ(${idx}, 1)">+</button>
+                                </div>
+                            `;
+                    list.appendChild(div);
+                });
+            } catch (error) {
+                log(`Error fetching inventory: ${error.message}`);
+                list.innerHTML = `<p style="color: var(--error);">Error loading inventory: ${error.message}</p>`;
             }
         }
+
+        /**
+         * Update quantity
+         */
+        function uQ(idx, delta) {
+            const el = document.getElementById(`q-${idx}`);
+            if (el) {
+                el.textContent = Math.max(0, parseInt(el.textContent || '0') + delta);
+            }
+        }
+
+        // ============================================
+        // EVENT HANDLERS
+        // ============================================
+
+        function setupEventHandlers() {
+            // Navigation
+            document.getElementById('nav-fleet')?.addEventListener('click', async () => {
+                await fetchLowStockAlerts();
+                showSection('view-fleet');
+            });
+
+            document.getElementById('nav-triage-log')?.addEventListener('click', async () => {
+                await fetchTriageLog();
+                showSection('view-triage-log');
+            });
+
+            document.getElementById('nav-timesheets')?.addEventListener('click', async () => {
+                await fetchTimesheets();
+                showSection('view-timesheets');
+            });
+
+            document.getElementById('nav-status-board')?.addEventListener('click', () => {
+                showSection('view-status');
+            });
+
+            document.getElementById('logout')?.addEventListener('click', () => {
+                AppState.reset();
+                location.reload();
+            });
+
+            // Links
+            document.getElementById('link-login')?.addEventListener('click', () => {
+                showSection('view-login');
+            });
+
+            document.getElementById('link-back-triage')?.addEventListener('click', () => {
+                showSection('view-triage');
+            });
+
+            // --- SERVICE INTAKE (TRANSMIT TO GANTRY) ---
+            document.getElementById('btn-triage')?.addEventListener('click', async () => {
+                console.log("[Gantry] Triage button pressed."); // Debug line
+
+                const btn = document.getElementById('btn-triage');
+                const name = document.getElementById('in-triageName').value.trim();
+                const email = document.getElementById('in-triageEmail').value.trim();
+                const post = document.getElementById('in-triagePost').value.trim();
+                const desc = document.getElementById('in-triageMsg').value.trim();
+
+                if (!name || !email || !post || !desc) {
+                    showStatus('res-triage', 'Please complete all fields', 'error');
+                    return;
+                }
+
+                btn.disabled = true;
+                showStatus('res-triage', 'Sending...', 'info');
+
+                // Payload matches your n8n Merge/AI requirements
+                const payload = {
+                    Name: name,
+                    Email: email,
+                    Postcode: post,
+                    Description: desc
+                };
+
+                const result = await api(payload, CONFIG.ENDPOINTS.TRIAGE);
+
+                if (result.ok) {
+                    showStatus('res-triage', '✓ Sent to Gantry', 'success');
+                    // Clear form
+                    document.getElementById('in-triageName').value = '';
+                    document.getElementById('in-triageEmail').value = '';
+                    document.getElementById('in-triagePost').value = '';
+                    document.getElementById('in-triageMsg').value = '';
+                } else {
+                    showStatus('res-triage', `Error: ${result.error}`, 'error');
+                }
+
+                btn.disabled = false;
+            });
+
+
+            // Login
+            document.getElementById('btn-login')?.addEventListener('click', async () => {
+                const password = document.getElementById('in-pass').value.trim();
+
+                if (password === 'admin') {
+                    AppState.setAdmin(true);
+                    showSection('view-fleet');
+                    await fetchLowStockAlerts();
+                    await refreshData();
+                } else {
+                    const driver = AppState.data.vans.find(v => String(v.Password) === password);
+                    if (driver) {
+                        AppState.setActiveVan(driver['Van ID'], driver['Driver Name']);
+                        document.getElementById('status-header').textContent = `Cockpit: ${AppState.activeDriver}`;
+                        const vanSelect = document.getElementById('in-stVan');
+                        if (vanSelect) {
+                            vanSelect.innerHTML = '';
+                            const option = new Option(
+                                `${sanitize(driver['Van ID'])} | ${sanitize(driver['Driver Name'])}`,
+                                driver['Van ID']
+                            );
+                            vanSelect.add(option);
+                        }
+                        showSection('view-status');
+                    } else {
+                        showStatus('res-triage', 'Access Denied', 'error');
+                    }
+                }
+            });
+
+            // Status Broadcast
+            document.getElementById('btn-status')?.addEventListener('click', async () => {
+                const van = document.getElementById('in-stVan').value;
+                const status = document.getElementById('in-stStatus').value;
+                const mileage = document.getElementById('in-stMileage').value;
+
+                if (!van || !status || !mileage) {
+                    showStatus('res-status', 'All fields required', 'error');
+                    return;
+                }
+
+                const result = await api(
+                    {
+                        type: 'status_update',
+                        vanId: van,
+                        driverName: AppState.activeDriver,
+                        status: status,
+                        mileage: mileage
+                    },
+                    CONFIG.ENDPOINTS.ADMIN
+                );
+
+                if (result.ok) {
+                    showStatus('res-status', '✓ Status Broadcasted', 'success');
+                    refreshData();
+                } else {
+                    showStatus('res-status', `Error: ${result.error}`, 'error');
+                }
+            });
+
+            // Inventory
+            document.getElementById('btn-go-inv')?.addEventListener('click', () => {
+                const van = document.getElementById('in-stVan').value;
+                if (!van) {
+                    showStatus('res-status', 'Please select a Van first', 'error');
+                    return;
+                }
+                AppState.activeVan = van;
+                fetchInventory(van);
+                showSection('view-inventory');
+            });
+
+            document.getElementById('btn-save-inv')?.addEventListener('click', async () => {
+                const mileage = document.getElementById('in-invMileage').value;
+                if (!mileage) {
+                    showStatus('res-status', 'Mileage Required', 'error');
+                    return;
+                }
+
+                const items = [];
+                document.querySelectorAll('.qty-control').forEach(div => {
+                    const name = div.dataset.name;
+                    const qty = div.querySelector('span').textContent;
+                    items.push({ name, qty });
+                });
+
+                const result = await api(
+                    {
+                        type: 'inventory',
+                        vanId: AppState.activeVan,
+                        driverName: AppState.activeDriver,
+                        updates: items,
+                        mileage: mileage
+                    },
+                    CONFIG.ENDPOINTS.ADMIN
+                );
+
+                if (result.ok) {
+                    showStatus('res-status', '✓ Inventory Synced', 'success');
+                    setTimeout(() => showSection('view-status'), 500);
+                } else {
+                    showStatus('res-status', `Error: ${result.error}`, 'error');
+                }
+            });
+
+            document.getElementById('btn-back-status')?.addEventListener('click', () => {
+                showSection('view-status');
+            });
+
+            // Fleet add button
+            document.getElementById('btn-add-driver')?.addEventListener('click', () => {
+                openDriverModal();
+            });
+
+            // Table filters
+            setupTableFilter('fleetSearch', 'fleet-registry-body');
+            setupTableFilter('timeSearch', 'timesheet-log-body');
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+
+        window.addEventListener('DOMContentLoaded', () => {
+            log('Gantry System Initializing...');
+            setupEventHandlers();
+            refreshData();
+        });
     </script>
 </body>
 </html>
