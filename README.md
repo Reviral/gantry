@@ -1,73 +1,58 @@
-# gantry
-A repository for my n8n Journey
-🏗️ GANTRY // Unified Service Dispatch & AI Triage
-Gantry is an automated, high-precision dispatch engine designed to bridge the gap between emergency service intake and field response. Built to solve the complexities of real-time fleet management, Gantry utilizes AI-driven triage, geospatial routing, and unified data synchronization to ensure that critical support reaches those who need it most, without delay.
+🏗️ GANTRY // Unified Fleet Command & AI Triage
+Gantry is a high-precision, automated ecosystem designed to bridge the gap between emergency service intake and field response. Originally built for high-stakes service environments (like stairlift repair), it has evolved into a unified command center for fleet logistics, real-time inventory synchronization, and AI-driven inbox maintenance.
 
 🚀 The Core Mission
-In high-stakes service environments—such as stairlift repair and accessibility support—seconds matter. Gantry replaces manual data entry and "gut-feeling" scheduling with a robust, automated pipeline that categorizes, prioritizes, and dispatches leads with zero human friction.
+In accessibility support and emergency repair, seconds matter. Gantry replaces fragmented manual data entry with a robust n8n-orchestrated pipeline that categorizes, prioritizes, and dispatches engineers while ensuring they have the exact parts needed for the job.
 
 🛠️ Key Engineering Features
-🧠 1. AI-Powered Emergency Triage
-Unlike traditional forms that rely on static dropdowns, Gantry utilizes a Large Language Model (LLM) to analyze the intent and context of service descriptions.
+🧠 1. Local AI Triage (Privacy-First)
+Unlike standard cloud-based systems, Gantry utilizes local LLMs (Llama 3 via Ollama) to analyze service intent.
 
-Dynamic Escalation: If the system detects a vulnerable person is "stuck" or "at risk," it overrides manual "Routine" settings to force a High Priority status.
+Dynamic Escalation: Automatically overrides "Routine" status to "High Priority" if it detects vulnerable persons at risk.
 
-Intelligent Summarization: The AI condenses long customer descriptions into actionable briefs for the field engineers.
+Intelligent Summarization: Condenses complex customer descriptions into actionable briefs for engineers.
 
-📍 2. Geospatial Driver Routing
-Gantry features a sophisticated postcode-matching engine.
+The Janitor: An integrated AI email scrubber that processes hundreds of communications daily, filtering noise while protecting high-value "Interview" and "Application" threads.
 
-Real-time Lookup: Incoming leads are instantly compared against a master driver database.
+📦 2. Real-Time Van Inventory & Sync
+A dedicated mobile-responsive interface for field engineers to manage their "mobile warehouse."
 
-Dynamic Assignment: Using postcode prefixes (e.g., BD1, HX1), the system identifies the assigned engineer and retrieves their specific Slack ID and contact credentials for immediate dispatch.
+Stock Synchronization: Engineers can update part quantities directly from their vans, which syncs instantly to the Gantry Ledger.
 
-🔄 3. Unified "Intermodal" Intake
-To prevent data fragmentation, Gantry employs a "Data Normalization" layer.
+Low Stock Alerts: The Gantry dashboard automatically flags vans with critically low inventory, ensuring planners never book a job the engineer can't complete.
 
-Standardized Schema: Whether a lead arrives via the Custom Web Portal or Email Parser, the data is re-mapped into a unified schema before entering the logic core.
+📍 3. Geospatial Driver Routing
+A sophisticated postcode-matching engine that identifies the correct engineer based on location.
 
-Cross-Channel Sync: Synchronization occurs across Google Sheets (Master Ledger), Slack (Field Dispatch), and the Admin Command Center simultaneously.
+Direct Dispatch: Incoming leads are instantly routed to the assigned engineer via Slack @mentions, providing them with the crisis brief and location data.
 
-🖥️ 4. Unified Admin Command Center
-A secure, custom-built frontend provides a "Single Pane of Glass" for management:
-<img width="1404" height="865" alt="image" src="https://github.com/user-attachments/assets/30433bcf-c00c-4385-90ee-d0fb212bb5c3" />
+🖥️ 4. Unified Command Center
+A "Single Pane of Glass" built with Vanilla JS and Flexbox for desktop and mobile oversight:
 
+Fleet Registry: Full control over driver profiles, area assignments, and access keys.
 
-Fleet Management: Create and update driver profiles with deep-link Slack integration.
-<img width="1404" height="863" alt="image" src="https://github.com/user-attachments/assets/44447ae4-8cc0-4f33-ac29-667480424a0a" />
+Triage Log: A searchable history of every service intake and its current assignment status.
 
-
-Status Broadcast: Real-time vehicle status updates using an "Append or Update" logic that maintains data integrity across the entire fleet ledger.
-<img width="1405" height="862" alt="image" src="https://github.com/user-attachments/assets/24336ed4-4dcf-4409-bdbf-af99a8d48a46" />
-
+Status Broadcast: Real-time vehicle status updates (e.g., On-Site, In-Transit, Stocking) that maintain data integrity across the fleet.
 
 🧰 Tech Stack
-Automation Engine: n8n (Advanced Workflow Orchestration) 
-<img width="3396" height="1273" alt="image" src="https://github.com/user-attachments/assets/d31becf9-078a-42fd-80cb-3c1f0b8f40df" />
+Orchestration: n8n (Advanced Workflow Automation)
 
+Intelligence: Local Llama 3 (via Ollama) on NVIDIA RTX 3070 (8GB VRAM)
 
-Intelligence: OpenAI GPT-4o (Contextual Triage)
+Frontend: HTML5 / CSS3 (Flexbox/Media Queries) / JavaScript (Fetch API)
 
-Frontend: HTML5 / CSS3 (Inter variable font) / JavaScript (Fetch API)
+Connectivity: Ngrok (Secure Webhook Tunneling)
 
-Database/CRM: Google Sheets (Relational Table Mode)
-
-Communication: Slack API (Real-time Mentions)
-
-Tunneling: Ngrok (Secure Webhook Routing)
+Communication: Slack API & Gmail API integration
 
 📊 Workflow Architecture
-Intake: Webhook captures raw JSON from the Gantry Portal.
+Intake: Data arrives via the Gantry Portal or Email Parser.
 
-Normalize: "Edit Fields" nodes standardize keys across all sources.
+Analyze: Local AI evaluates priority and generates a brief.
 
-Analyze: AI Agent evaluates priority and creates a summary.
-
-Route: Code Node performs a geospatial lookup against the Drivers Database.
+Inventory Check: System verifies the assigned engineer has the required parts.
 
 Output: * Google Sheets: Updates the Master Ledger.
 
-Slack: Triggers an @mention to the assigned engineer with the crisis brief.
-
-📽️ Demo
-Included in this repository is a full walkthrough showing the Gantry responding to a real-world emergency scenario in HX1, demonstrating the full path from Web Portal to Slack Dispatch.
+Slack: Triggers the @mention to the field engineer.
