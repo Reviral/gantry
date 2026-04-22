@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Gantry | Unified Control</title>
     <style>
+
+
         :root {
             --primary: #0b5ed7;
             --primary-hover: #0a4eb1;
@@ -234,6 +236,32 @@
                 background: #dbeafe;
                 color: #1e40af;
             }
+
+        /* Status Badge Colors */
+        .status-onsite {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        /* Blue */
+        .status-onroute {
+            color: var(--warning);
+            font-weight: bold;
+        }
+        /* Amber */
+        .status-available {
+            color: var(--success);
+            font-weight: bold;
+        }
+        /* Green */
+        .status-offline {
+            color: var(--text-light);
+        }
+        /* Gray */
+        .status-break {
+            color: #94a3b8;
+            font-style: italic;
+        }
+        /* Slate */
 
         /* Tables */
         .table-wrapper {
@@ -479,11 +507,15 @@
                     <div class="card">
                         <div class="card-header">
                             <h2>Fleet Registry</h2>
-                            <div style="display:flex; gap:10px;">
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <select id="in-drVan" style="width:auto; display:none;"></select>
+                                <button id="btn-inspect-van" style="display:none;" onclick="const v=document.getElementById('in-drVan').value; if(v){ AppState.activeVan=v; fetchInventory(v); showSection('view-inventory'); }"></button>
+
                                 <input type="text" id="fleetSearch" class="search-input" placeholder="Filter Registry...">
                                 <button id="btn-add-driver" class="btn btn-success btn-sm">+[...] Add</button>
                             </div>
                         </div>
+                        ...
                         <div class="table-wrapper">
                             <table>
                                 <thead>
@@ -491,6 +523,7 @@
                                         <th>VAN ID</th>
                                         <th>DRIVER</th>
                                         <th>AREA</th>
+                                        <th>STATUS</th>
                                         <th style="text-align:right;">ACTIONS</th>
                                     </tr>
                                 </thead>
@@ -734,15 +767,33 @@
                 const driverName = sanitize(van['Driver Name']);
                 const area = sanitize(van['Postcode Area'] || '-');
 
+                // Grab the status, defaulting to 'Offline' if missing
+                const status = sanitize(van['Status'] || 'Offline');
+
+                // Match the status text to your existing CSS classes
+                let statusClass = 'status-offline'; // Default
+                const statusLower = status.toLowerCase();
+
+                if (statusLower.includes('onsite') || statusLower.includes('on site')) {
+                    statusClass = 'status-onsite';
+                } else if (statusLower.includes('route')) {
+                    statusClass = 'status-onroute';
+                } else if (statusLower.includes('available')) {
+                    statusClass = 'status-available';
+                } else if (statusLower.includes('break')) {
+                    statusClass = 'status-break';
+                }
+
                 tr.innerHTML = `
-                            <td style="font-weight:bold; color:var(--primary);">${vanId}</td>
-                            <td>${driverName}</td>
-                            <td>${area}</td>
-                            <td style="text-align:right;">
-                                <button class="icon-btn" onclick="openDriverModal('${van['Van ID']}')">✏️</button>
-                                <button class="icon-btn" onclick="deleteDriver('${van['Van ID']}')">🗑️</button>
-                            </td>
-                        `;
+            <td style="font-weight:bold; color:var(--primary);">${vanId}</td>
+            <td>${driverName}</td>
+            <td>${area}</td>
+            <td><span class="${statusClass}">${status}</span></td>
+            <td style="text-align:right;">
+                <button class="icon-btn" onclick="openDriverModal('${van['Van ID']}')">✏️</button>
+                <button class="icon-btn" onclick="deleteDriver('${van['Van ID']}')">🗑️</button>
+            </td>
+        `;
                 body.appendChild(tr);
             });
         }
@@ -757,6 +808,7 @@
                 "Mobile": "",
                 "Slack ID": "",
                 "Status": "Offline"
+
             };
 
             let type = "add_driver";
@@ -1087,6 +1139,7 @@
         function setupEventHandlers() {
             // Navigation
             document.getElementById('nav-fleet')?.addEventListener('click', async () => {
+                await refreshData(); // <--- Add this line to force a fresh pull
                 await fetchLowStockAlerts();
                 showSection('view-fleet');
             });
@@ -1214,9 +1267,13 @@
                     CONFIG.ENDPOINTS.ADMIN
                 );
 
-                if (result.ok) {
+                if(result.ok) {
                     showStatus('res-status', '✓ Status Broadcasted', 'success');
-                    refreshData();
+                    // Give the database 1 second to settle before we ask for the new data
+                    setTimeout(() => {
+                        refreshData();
+                    }, 1000);
+                
                 } else {
                     showStatus('res-status', `Error: ${result.error}`, 'error');
                 }
