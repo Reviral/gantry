@@ -56,6 +56,18 @@
         }
 
         /* Layout */
+
+        @media (max-width: 768px) {
+    .sidebar {
+        display: none; /* Or make it a toggle-able drawer */
+    }
+    .main-content {
+        padding: 10px;
+    }
+    #planner-map {
+        height: 300px; /* Shorter for portrait phones */
+    }
+}
         .wrapper {
             display: flex;
             flex: 1;
