@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="manifest" href="manifest.json">
     <script src="https://unpkg.com/@mapbox/polyline@1.1.1/src/polyline.js"></script>
+    <button id="manual-install" style="display:none;" class="btn btn-warning btn-sm">Install App</button>
     <style>
 
 
@@ -1735,6 +1736,28 @@
                     .catch(err => console.log('Service Worker Error', err));
             });
         }
+
+        let deferredPrompt;
+        const installBtn = document.getElementById('manual-install');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome from showing its own tiny prompt
+            e.preventDefault();
+            deferredPrompt = e;
+            // Show our own "Install App" button instead
+            installBtn.style.display = 'block';
+
+            installBtn.addEventListener('click', () => {
+                installBtn.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the Gantry install');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+        });
     </script>
 </body>
 </html>
