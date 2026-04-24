@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Gantry | Unified Control</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<link rel="manifest" href="manifest.json">
-<script src="https://unpkg.com/@mapbox/polyline@1.1.1/src/polyline.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <script src="https://unpkg.com/@mapbox/polyline@1.1.1/src/polyline.js"></script>
     <style>
 
 
@@ -63,63 +63,35 @@
             overflow: hidden;
         }
 
-    /* Responsive Wrapper Patch for Mobile */
-    /* --- COMPACT MOBILE GRID PATCH --- */
-    /* --- MOBILE APP GRID OPTIMIZATION --- */
-    @media (max-width: 768px) {
-        .wrapper {
-            flex-direction: column !important;
-            overflow-y: auto;
-        }
+        /* Responsive Wrapper Patch for Mobile */
+        @media (max-width: 768px) {
+            .wrapper {
+                flex-direction: column;
+                overflow-y: auto;
+            }
 
-        .sidebar {
-            width: 100% !important;
-            height: auto !important;
-            border-right: none !important;
-            border-bottom: 2px solid var(--border);
-            display: grid !important; /* Force Grid for mobile */
-            grid-template-columns: repeat(2, 1fr); /* 2 equal columns */
-            gap: 8px !important;
-            padding: 12px !important;
-            background: #f8fafc !important;
-        }
+            .sidebar {
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid var(--border);
+                height: auto !important;
+                flex-direction: row !important;
+                flex-wrap: wrap;
+            }
 
-        /* Only show sidebar if it's NOT explicitly hidden by inline styles */
-        .sidebar[style*="display: none"], 
-        .sidebar[style*="display:none"] {
-            display: none !important;
-        }
+                .sidebar a {
+                    flex: 1 1 auto;
+                    text-align: center;
+                }
 
-        .sidebar a {
-            padding: 10px 5px !important;
-            font-size: 0.8rem !important;
-            text-align: center;
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-light);
-            font-weight: 600;
-        }
+            .sidebar-spacer {
+                display: none !important;
+            }
 
-        .sidebar a.active {
-            background: var(--primary) !important;
-            color: #fff !important;
-            border-color: var(--primary);
+            .main-content {
+                padding: 1rem !important;
+            }
         }
-
-        .sidebar-spacer {
-            display: none !important;
-        }
-
-        .main-content {
-            padding: 15px !important;
-        }
-
-        .card {
-            padding: 1.5rem !important;
-            margin-bottom: 15px;
-        }
-    }
 
         .sidebar {
             width: 260px;
@@ -325,17 +297,17 @@
         }
         /* Slate */
 
-        
-#planner-map {
-    height: 450px !important; /* Forces a visible height */
-    width: 100%;
-    z-index: 1;
-}
 
-.leaflet-container {
-    height: 100%;
-    width: 100%;
-}
+        #planner-map {
+            height: 450px !important; /* Forces a visible height */
+            width: 100%;
+            z-index: 1;
+        }
+
+        .leaflet-container {
+            height: 100%;
+            width: 100%;
+        }
 
         /* Tables */
         .table-wrapper {
@@ -482,6 +454,32 @@
         section[style*="display:none"],
         .hidden {
             display: none !important;
+        }
+
+        /* Print styles */
+        @media print {
+            header, .sidebar, .btn, .search-input {
+                display: none !important;
+            }
+
+            body, .wrapper, .main-content {
+                display: block;
+                height: auto;
+                overflow: visible;
+            }
+
+            .card {
+                box-shadow: none;
+                border: none;
+            }
+
+            #view-planner {
+                display: block !important;
+            }
+
+            #planner-map {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -670,29 +668,31 @@
                 </section>
 
                 <section id="view-planner" class="section" style="display:none;">
-    <div class="card">
-        <div class="card-header"><h2>Route Planner & Dispatch</h2></div>
-        <div class="card-body">
-            <label>Select Driver/Van:</label>
-            <select id="plan-vanId" class="input-field"></select>
-            
-            <label>Paste Job List (Name, Address, Type):</label>
-            <textarea id="job-input-list" placeholder="John Doe, 123 High St BD21, Install..." rows="8"></textarea>
-            
-            <button id="btn-calculate-route" class="btn btn-primary">1. Filter & Optimize Route</button>
-        </div>
-    </div>
+                    <div class="card">
+                        <div class="card-header"><h2>Route Planner & Dispatch</h2></div>
+                        <div class="card-body">
+                            <label>Select Driver/Van:</label>
+                            <select id="plan-vanId" class="input-field"></select>
 
-    <div class="card" id="planner-map" style="height: 400px; margin-top: 20px;"></div>
+                            <label>Paste Job List (Name, Address, Type):</label>
+                            <textarea id="job-input-list" placeholder="John Doe, 123 High St BD21, Install..." rows="8"></textarea>
 
-    <div id="optimized-plan-results" class="card" style="display:none; margin-top: 20px;">
-        <div class="card-body">
-            <h3>Optimized Schedule</h3>
-            <div id="route-list-output"></div>
-            <button id="btn-dispatch-emails" class="btn btn-success">2. Confirm & Email Customers</button>
-        </div>
-    </div>
-</section>
+                            <button id="btn-calculate-route" class="btn btn-primary">1. Filter & Optimize Route</button>
+                        </div>
+                    </div>
+
+                    <div class="card" id="planner-map" style="height: 400px; margin-top: 20px;"></div>
+
+                    <div id="optimized-plan-results" class="card" style="display:none; margin-top: 20px;">
+                        <div class="card-body">
+                            <h3>Optimized Schedule</h3>
+                            <div id="route-list-output"></div>
+                            <button id="btn-dispatch-emails" class="btn btn-success" style="margin-bottom: 10px;">2. Confirm & Email Customers</button>
+                            <button id="btn-save-route" class="btn btn-primary" style="margin-bottom: 10px;">3. Save Route to Gantry</button>
+                            <button id="btn-print-route" class="btn btn-secondary">Print Route</button>
+                        </div>
+                    </div>
+                </section>
 
             </div>
         </main>
@@ -713,7 +713,8 @@
                 INVENTORY: "/webhook/a7ab21d6-725d-445a-a0dd-b8fac91c43d1",
                 LOW_STOCK: "/webhook/6434129a-29dc-4916-bf91-7575e299fa22",
                 TRIAGE_LOG: "/webhook/d93e66d1-269d-431f-b8ac-46baf509a81b",
-                TIMESHEET: "/webhook/3bd5686b-51b7-4ca1-8d9b-72847cd71de0"
+                TIMESHEET: "/webhook/3bd5686b-51b7-4ca1-8d9b-72847cd71de0",
+                SAVE_ROUTE: "/webhook/b52d7f78-653c-4b06-a6ff-ac24e275b27a" /* TODO: Update with your n8n webhook ID */
             }
         };
 
@@ -721,12 +722,14 @@
         // STATE MANAGEMENT
         // ============================================
         let plannerMap = null; // Global map reference for planner
-        
+
         const AppState = {
             data: { vans: [] },
             activeVan: null,
             activeDriver: "",
             isAdmin: false,
+            originalJobs: [],
+            currentRoute: null,
 
             setActiveVan(vanId, driverName) {
                 this.activeVan = vanId;
@@ -760,15 +763,15 @@
         }
 
         function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 3958.8; // Radius of Earth in miles
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c; // Returns distance in miles
-}
+            const R = 3958.8; // Radius of Earth in miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Returns distance in miles
+        }
 
         /**
          * Show status message with styling
@@ -798,7 +801,7 @@
                 console.log(`[Gantry] ${message}`);
             }
         }
-        
+
 
         /**
          * Universal table filter
@@ -819,42 +822,42 @@
         /**
          * Display route results in a user-friendly format
          */
-        
+
         function displayRouteResults(route) {
-    const resultsDiv = document.getElementById('route-list-output');
-    resultsDiv.innerHTML = ''; // Clear previous
+            const resultsDiv = document.getElementById('route-list-output');
+            resultsDiv.innerHTML = ''; // Clear previous
 
-    let totalTime = 0;
-    let totalMiles = 0;
-    let currentTime = new Date();
-    currentTime.setHours(8, 0, 0); // Assume an 8:00 AM start
+            let totalTime = 0;
+            let totalMiles = 0;
+            let currentTime = new Date();
+            currentTime.setHours(8, 0, 0); // Assume an 8:00 AM start
 
-    let html = `<table class="table">
-        <thead>
-            <tr><th>#</th><th>Time</th><th>Destination</th><th>Travel</th></tr>
-        </thead>
-        <tbody>`;
+            let html = `<table class="table">
+            <thead>
+                <tr><th>#</th><th>Time</th><th>Destination</th><th>Travel</th></tr>
+            </thead>
+            <tbody>`;
 
-    route.legs.forEach((leg, index) => {
-        // Add travel time to current clock
-        const travelMinutes = Math.round(leg.duration.value / 60);
-        const arrivalTime = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
-        html += `<tr>
-            <td>${index + 1}</td>
-            <td><strong>${arrivalTime}</strong></td>
-            <td>${leg.end_address.split(',')[0]} <br><small>${leg.end_address}</small></td>
-            <td>${leg.distance.text} (${leg.duration.text})</td>
-        </tr>`;
+            route.legs.forEach((leg, index) => {
+                // Add travel time to current clock
+                const travelMinutes = Math.round(leg.duration.value / 60);
+                const arrivalTime = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        // Update clock: Travel Time + 60 mins for the job itself
-        currentTime.setMinutes(currentTime.getMinutes() + travelMinutes + 60);
-        totalMiles += leg.distance.value;
-    });
+                html += `<tr>
+                <td>${index + 1}</td>
+                <td><strong>${arrivalTime}</strong></td>
+                <td>${leg.end_address.split(',')[0]} <br><small>${leg.end_address}</small></td>
+                <td>${leg.distance.text} (${leg.duration.text})</td>
+            </tr>`;
 
-    html += `</tbody></table>`;
-    resultsDiv.innerHTML = html;
-}
+                // Update clock: Travel Time + 60 mins for the job itself
+                currentTime.setMinutes(currentTime.getMinutes() + travelMinutes + 60);
+                totalMiles += leg.distance.value;
+            });
+
+            html += `</tbody></table>`;
+            resultsDiv.innerHTML = html;
+        }
 
         /**
          * Make API calls with proper error handling
@@ -939,15 +942,15 @@
                 }
 
                 tr.innerHTML = `
-            <td style="font-weight:bold; color:var(--primary);">${vanId}</td>
-            <td>${driverName}</td>
-            <td>${area}</td>
-            <td><span class="${statusClass}">${status}</span></td>
-            <td style="text-align:right;">
-                <button class="icon-btn" onclick="openDriverModal('${van['Van ID']}')">✏️</button>
-                <button class="icon-btn" onclick="deleteDriver('${van['Van ID']}')">🗑️</button>
-            </td>
-        `;
+                <td style="font-weight:bold; color:var(--primary);">${vanId}</td>
+                <td>${driverName}</td>
+                <td>${area}</td>
+                <td><span class="${statusClass}">${status}</span></td>
+                <td style="text-align:right;">
+                    <button class="icon-btn" onclick="openDriverModal('${van['Van ID']}')">✏️</button>
+                    <button class="icon-btn" onclick="deleteDriver('${van['Van ID']}')">🗑️</button>
+                </td>
+            `;
                 body.appendChild(tr);
             });
         }
@@ -1063,43 +1066,43 @@
         }
 
         function updateVanSelects() {
-    const drV = document.getElementById('in-drVan');
-    const stV = document.getElementById('in-stVan');
-    const plV = document.getElementById('plan-vanId'); // The new Route Planner dropdown
+            const drV = document.getElementById('in-drVan');
+            const stV = document.getElementById('in-stVan');
+            const plV = document.getElementById('plan-vanId'); // The new Route Planner dropdown
 
-    // Populate Status Board Select
-    if (stV) {
-        stV.innerHTML = '<option value="">-- Select Van --</option>';
-        AppState.data.vans.forEach(v => {
-            if (v['Van ID']) {
-                const name = `${sanitize(v['Van ID'])} | ${sanitize(v['Driver Name'])}`;
-                stV.add(new Option(name, v['Van ID']));
+            // Populate Status Board Select
+            if (stV) {
+                stV.innerHTML = '<option value="">-- Select Van --</option>';
+                AppState.data.vans.forEach(v => {
+                    if (v['Van ID']) {
+                        const name = `${sanitize(v['Van ID'])} | ${sanitize(v['Driver Name'])}`;
+                        stV.add(new Option(name, v['Van ID']));
+                    }
+                });
             }
-        });
-    }
 
-    // Populate Fleet Management Select
-    if (drV && AppState.isAdmin) {
-        drV.innerHTML = '<option value="">-- Select Van --</option>';
-        AppState.data.vans.forEach(v => {
-            if (v['Van ID']) {
-                const name = `${sanitize(v['Van ID'])} | ${sanitize(v['Driver Name'])}`;
-                drV.add(new Option(name, v['Van ID']));
+            // Populate Fleet Management Select
+            if (drV && AppState.isAdmin) {
+                drV.innerHTML = '<option value="">-- Select Van --</option>';
+                AppState.data.vans.forEach(v => {
+                    if (v['Van ID']) {
+                        const name = `${sanitize(v['Van ID'])} | ${sanitize(v['Driver Name'])}`;
+                        drV.add(new Option(name, v['Van ID']));
+                    }
+                });
             }
-        });
-    }
 
-    // NEW: Populate Route Planner Select
-    if (plV) {
-        plV.innerHTML = '<option value="">-- Select Van --</option>';
-        AppState.data.vans.forEach(v => {
-            if (v['Van ID']) {
-                const name = `${sanitize(v['Van ID'])} | ${sanitize(v['Driver Name'])}`;
-                plV.add(new Option(name, v['Van ID']));
+            // NEW: Populate Route Planner Select
+            if (plV) {
+                plV.innerHTML = '<option value="">-- Select Van --</option>';
+                AppState.data.vans.forEach(v => {
+                    if (v['Van ID']) {
+                        const name = `${sanitize(v['Van ID'])} | ${sanitize(v['Driver Name'])}`;
+                        plV.add(new Option(name, v['Van ID']));
+                    }
+                });
             }
-        });
-    }
-}
+        }
 
         function updateStatusSelect(statusDefinitions) {
             const stS = document.getElementById('in-stStatus');
@@ -1141,13 +1144,13 @@
                 data.forEach(row => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                                <td>${sanitize(row.date)}</td>
-                                <td style="font-weight:600;">${sanitize(row.driver)}</td>
-                                <td>${sanitize(row.start)}</td>
-                                <td>${sanitize(row.end)}</td>
-                                <td style="color:var(--primary); font-weight:bold;">${sanitize(row.hours)}h</td>
-                                <td>${sanitize(row.miles)} mi</td>
-                            `;
+                                    <td>${sanitize(row.date)}</td>
+                                    <td style="font-weight:600;">${sanitize(row.driver)}</td>
+                                    <td>${sanitize(row.start)}</td>
+                                    <td>${sanitize(row.end)}</td>
+                                    <td style="color:var(--primary); font-weight:bold;">${sanitize(row.hours)}h</td>
+                                    <td>${sanitize(row.miles)} mi</td>
+                                `;
                     body.appendChild(tr);
                 });
             } catch (error) {
@@ -1217,13 +1220,13 @@
                 data.forEach(item => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                                <td>${sanitize(item.Timestamp || '-')}</td>
-                                <td style="font-weight:600;">${sanitize(item.Name || '-')}</td>
-                                <td>${sanitize(item.Postcode || '-')}</td>
-                                <td>${sanitize(item.Priority || '-')}</td>
-                                <td>${sanitize(item.Summary || '-')}</td>
-                                <td>${sanitize(item.Assignment || '-')}</td>
-                            `;
+                                    <td>${sanitize(item.Timestamp || '-')}</td>
+                                    <td style="font-weight:600;">${sanitize(item.Name || '-')}</td>
+                                    <td>${sanitize(item.Postcode || '-')}</td>
+                                    <td>${sanitize(item.Priority || '-')}</td>
+                                    <td>${sanitize(item.Summary || '-')}</td>
+                                    <td>${sanitize(item.Assignment || '-')}</td>
+                                `;
                     body.appendChild(tr);
                 });
             } catch (error) {
@@ -1270,16 +1273,16 @@
                     div.dataset.index = idx;
 
                     div.innerHTML = `
-                                <div>
-                                    <div style="font-weight:600;">${sanitize(item['Item Name'])}</div>
-                                    <div style="font-size:0.8rem; color:var(--text-light)">Min: ${sanitize(min)}</div>
-                                </div>
-                                <div style="display:flex; gap:10px; align-items:center;">
-                                    <button class="qty-btn" onclick="uQ(${idx}, -1)">−</button>
-                                    <span id="q-${idx}" style="min-width:40px; text-align:center; font-weight:bold; color:${color};">${qty}</span>
-                                    <button class="qty-btn" onclick="uQ(${idx}, 1)">+</button>
-                                </div>
-                            `;
+                                    <div>
+                                        <div style="font-weight:600;">${sanitize(item['Item Name'])}</div>
+                                        <div style="font-size:0.8rem; color:var(--text-light)">Min: ${sanitize(min)}</div>
+                                    </div>
+                                    <div style="display:flex; gap:10px; align-items:center;">
+                                        <button class="qty-btn" onclick="uQ(${idx}, -1)">−</button>
+                                        <span id="q-${idx}" style="min-width:40px; text-align:center; font-weight:bold; color:${color};">${qty}</span>
+                                        <button class="qty-btn" onclick="uQ(${idx}, 1)">+</button>
+                                    </div>
+                                `;
                     list.appendChild(div);
                 });
             } catch (error) {
@@ -1306,17 +1309,17 @@
             // Navigation
 
             // Replace lines 850-852 with this:
-document.getElementById('nav-route-planner')?.addEventListener('click', () => {
-    showSection('view-planner');
-    
-    // Refresh the map size after the section is visible
-    setTimeout(() => {
-        if (plannerMap) {
-            plannerMap.invalidateSize();
-            log("Map container refreshed.");
-        }
-    }, 100);
-});
+            document.getElementById('nav-route-planner')?.addEventListener('click', () => {
+                showSection('view-planner');
+
+                // Refresh the map size after the section is visible
+                setTimeout(() => {
+                    if (plannerMap) {
+                        plannerMap.invalidateSize();
+                        log("Map container refreshed.");
+                    }
+                }, 100);
+            });
 
             document.getElementById('btn-inspect-van')?.addEventListener('click', () => {
                 const v = document.getElementById('in-drVan').value;
@@ -1404,68 +1407,143 @@ document.getElementById('nav-route-planner')?.addEventListener('click', () => {
             });
 
             // --- ROUTE PLANNER HANDLERS ---
-document.getElementById('btn-calculate-route')?.addEventListener('click', async () => {
-    const btn = document.getElementById('btn-calculate-route');
-    const vanId = document.getElementById('plan-vanId').value;
-    const rawJobs = document.getElementById('job-input-list').value;
+            document.getElementById('btn-calculate-route')?.addEventListener('click', async () => {
+                const btn = document.getElementById('btn-calculate-route');
+                const vanId = document.getElementById('plan-vanId').value;
+                const rawJobs = document.getElementById('job-input-list').value;
 
-    if (!vanId || !rawJobs) {
-        alert("Please select a Van and paste your job list.");
-        return;
-    }
+                // Parse jobs to get customer names for later; store them globally.
+                AppState.originalJobs = rawJobs.split('\n').filter(line => line.trim() !== '').map(line => {
+                    const parts = line.split(',');
+                    return {
+                        customer: (parts[0] || '').trim(),
+                        address: (parts[1] || '').trim()
+                    };
+                });
 
-    btn.disabled = true;
-    btn.textContent = "Gantry calculating... Please wait.";
-    
-    try {
-        const response = await fetch("https://decimeter-easeful-replica.ngrok-free.dev/webhook/42f2d420-c7ab-463e-9351-2e5fd9ffdf46", {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'ngrok-skip-browser-warning': 'true'
-            },
-            body: JSON.stringify({ vanId: vanId, jobs: rawJobs })
-        });
+                if (!vanId || AppState.originalJobs.length === 0) {
+                    alert("Please select a Van and paste your job list.");
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.textContent = "Gantry calculating... Please wait.";
+
+                try {
+                    const response = await fetch("https://decimeter-easeful-replica.ngrok-free.dev/webhook/42f2d420-c7ab-463e-9351-2e5fd9ffdf46", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'ngrok-skip-browser-warning': 'true'
+                        },
+                        body: JSON.stringify({ vanId: vanId, jobs: rawJobs })
+                    });
 
 
-        if (!response.ok) throw new Error("Gantry cannot reach n8n.");
+                    if (!response.ok) throw new Error("Gantry cannot reach n8n.");
 
-        const data = await response.json();
-        // n8n sends an array, we want the first result
-        const result = Array.isArray(data) ? data[0] : data;
+                    const data = await response.json();
+                    // n8n sends an array, we want the first result
+                    const result = Array.isArray(data) ? data[0] : data;
 
-        if (result?.routes?.[0]) {
-            // Show the results section
-            document.getElementById('optimized-plan-results').style.display = 'block';
-            
-            // 1. Wake up the map (fixes the 'small map' bug)
-            if (plannerMap) plannerMap.invalidateSize();
+                    if (result?.routes?.[0]) {
+                        // Save route globally for printing/saving
+                        AppState.currentRoute = result.routes[0];
 
-            // 2. Fill the table with times
-            displayRouteResults(result.routes[0]); 
+                        // Show the results section
+                        document.getElementById('optimized-plan-results').style.display = 'block';
 
-            // 3. Draw the line AND the Markers
-            drawRouteOnMap(result.routes[0]);
-            
-            log("Success: Route and Waypoints rendered.");
-        } else {
-            alert("n8n responded, but Google couldn't find a route. Check your addresses!");
-        }
-    } catch (err) {
-        console.error(err);
-        alert("Connection lost. Is ngrok running with the --url flag?");
-    } finally {
-        btn.disabled = false;
-        btn.textContent = "1. Filter & Optimize Route";
-    }
-});
+                        // 1. Wake up the map (fixes the 'small map' bug)
+                        if (plannerMap) plannerMap.invalidateSize();
 
-document.getElementById('btn-dispatch-emails')?.addEventListener('click', async () => {
-    if(confirm("Send automated arrival times to all customers?")) {
-        log("Dispatching emails via Gantry...");
-        // Call your n8n Email branch here
-    }
-});
+                        // 2. Fill the table with times
+                        displayRouteResults(result.routes[0]);
+
+                        // 3. Draw the line AND the Markers
+                        drawRouteOnMap(result.routes[0]);
+
+                        log("Success: Route and Waypoints rendered.");
+                    } else {
+                        alert("n8n responded, but Google couldn't find a route. Check your addresses!");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Connection lost. Is ngrok running with the --url flag?");
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = "1. Filter & Optimize Route";
+                }
+            });
+
+            document.getElementById('btn-save-route')?.addEventListener('click', async () => {
+                const btn = document.getElementById('btn-save-route');
+                const vanId = document.getElementById('plan-vanId').value;
+                const route = AppState.currentRoute;
+
+                if (!route || !vanId) {
+                    alert("No optimized route or Van selected to save.");
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.textContent = "Saving to Gantry...";
+
+                // Match the optimized route legs from Google with the original customer names.
+                // `waypoint_order` gives us the sequence of the original jobs.
+                const orderedJobs = route.waypoint_order.map(i => AppState.originalJobs[i]);
+
+                // Create a new `legs` array that includes the customer name.
+                const newLegs = route.legs.map((leg, index) => {
+                    const job = orderedJobs[index];
+                    return {
+                        customer: job ? job.customer : 'Unknown Stop',
+                        address: leg.end_address,
+                        distance: leg.distance.text
+                    };
+                });
+
+                // Calculate total distance in miles for the log.
+                const totalMiles = route.legs.reduce((total, leg) => total + leg.distance.value, 0) / 1609.34;
+
+                // This payload structure matches your n8n code node.
+                const payload = {
+                    vanId: vanId,
+                    summary: route.summary,
+                    total_miles: totalMiles.toFixed(1),
+                    legs: newLegs
+                };
+
+                try {
+                    // By omitting 'application/json' and custom headers, we force a "Simple Request".
+                    // This completely bypasses the browser's strict CORS OPTIONS preflight check!
+                    const response = await fetch(`${CONFIG.API_BASE}${CONFIG.ENDPOINTS.SAVE_ROUTE}`, {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        alert("✓ Route successfully saved to Gantry/n8n.");
+                    } else {
+                        alert(`❌ Failed to save route. n8n returned: HTTP ${response.status}`);
+                    }
+                } catch (err) {
+                    alert(`❌ Fetch failed: ${err.message}`);
+                }
+
+                btn.disabled = false;
+                btn.textContent = "3. Save Route to Gantry";
+            });
+
+            document.getElementById('btn-print-route')?.addEventListener('click', () => {
+                window.print();
+            });
+
+            document.getElementById('btn-dispatch-emails')?.addEventListener('click', async () => {
+                if (confirm("Send automated arrival times to all customers?")) {
+                    log("Dispatching emails via Gantry...");
+                    // Call your n8n Email branch here
+                }
+            });
 
 
             // Login
@@ -1520,13 +1598,13 @@ document.getElementById('btn-dispatch-emails')?.addEventListener('click', async 
                     CONFIG.ENDPOINTS.ADMIN
                 );
 
-                if(result.ok) {
+                if (result.ok) {
                     showStatus('res-status', '✓ Status Broadcasted', 'success');
                     // Give the database 1 second to settle before we ask for the new data
                     setTimeout(() => {
                         refreshData();
                     }, 1000);
-                
+
                 } else {
                     showStatus('res-status', `Error: ${result.error}`, 'error');
                 }
@@ -1605,58 +1683,58 @@ document.getElementById('btn-dispatch-emails')?.addEventListener('click', async 
         // ============================================
 
         window.addEventListener('DOMContentLoaded', () => {
-    log('Gantry System Initializing...');
-    setupEventHandlers();
-    refreshData();
+            log('Gantry System Initializing...');
+            setupEventHandlers();
+            refreshData();
 
-    // Initialize the Map!
-    plannerMap = L.map('planner-map').setView([53.99, -1.54], 13); // Centered on Harrogate
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(plannerMap);
-});
-function drawRouteOnMap(route) {
-    if (!plannerMap || !route) return;
+            // Initialize the Map!
+            plannerMap = L.map('planner-map').setView([53.99, -1.54], 13); // Centered on Harrogate
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(plannerMap);
+        });
+        function drawRouteOnMap(route) {
+            if (!plannerMap || !route) return;
 
-    // 1. Decode and Draw the Blue Line
-    const coordinates = polyline.decode(route.overview_polyline.points);
-    
-    if (window.currentRouteLayer) { plannerMap.removeLayer(window.currentRouteLayer); }
-    if (window.markerGroup) { plannerMap.removeLayer(window.markerGroup); }
+            // 1. Decode and Draw the Blue Line
+            const coordinates = polyline.decode(route.overview_polyline.points);
 
-    window.currentRouteLayer = L.polyline(coordinates, {
-        color: 'var(--primary)',
-        weight: 6,
-        opacity: 0.8
-    }).addTo(plannerMap);
+            if (window.currentRouteLayer) { plannerMap.removeLayer(window.currentRouteLayer); }
+            if (window.markerGroup) { plannerMap.removeLayer(window.markerGroup); }
 
-    // 2. Add Markers for each stop
-    window.markerGroup = L.layerGroup().addTo(plannerMap);
+            window.currentRouteLayer = L.polyline(coordinates, {
+                color: 'var(--primary)',
+                weight: 6,
+                opacity: 0.8
+            }).addTo(plannerMap);
 
-    // Add Start Marker (Origin)
-    const start = route.legs[0].start_location;
-    L.marker([start.lat, start.lng]).addTo(window.markerGroup)
-        .bindPopup("<b>Start:</b> " + route.legs[0].start_address);
+            // 2. Add Markers for each stop
+            window.markerGroup = L.layerGroup().addTo(plannerMap);
 
-    // Add Stop Markers
-    route.legs.forEach((leg, index) => {
-        const iconNumber = index + 1;
-        const latlng = [leg.end_location.lat, leg.end_location.lng];
-        
-        // Drop a marker at the end of each leg
-        L.marker(latlng).addTo(window.markerGroup)
-            .bindPopup(`<b>Stop ${iconNumber}:</b><br>${leg.end_address}`);
-    });
+            // Add Start Marker (Origin)
+            const start = route.legs[0].start_location;
+            L.marker([start.lat, start.lng]).addTo(window.markerGroup)
+                .bindPopup("<b>Start:</b> " + route.legs[0].start_address);
 
-    plannerMap.fitBounds(window.currentRouteLayer.getBounds());
-}
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('Gantry Service Worker Registered'))
-      .catch(err => console.log('Service Worker Error', err));
-  });
-}
+            // Add Stop Markers
+            route.legs.forEach((leg, index) => {
+                const iconNumber = index + 1;
+                const latlng = [leg.end_location.lat, leg.end_location.lng];
+
+                // Drop a marker at the end of each leg
+                L.marker(latlng).addTo(window.markerGroup)
+                    .bindPopup(`<b>Stop ${iconNumber}:</b><br>${leg.end_address}`);
+            });
+
+            plannerMap.fitBounds(window.currentRouteLayer.getBounds());
+        }
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Gantry Service Worker Registered'))
+                    .catch(err => console.log('Service Worker Error', err));
+            });
+        }
     </script>
 </body>
 </html>
