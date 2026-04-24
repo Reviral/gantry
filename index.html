@@ -56,23 +56,41 @@
         }
 
         /* Layout */
-
-        @media (max-width: 768px) {
-    .sidebar {
-        display: none; /* Or make it a toggle-able drawer */
-    }
-    .main-content {
-        padding: 10px;
-    }
-    #planner-map {
-        height: 300px; /* Shorter for portrait phones */
-    }
-}
         .wrapper {
             display: flex;
             flex: 1;
             overflow: hidden;
         }
+
+    /* Responsive Wrapper Patch for Mobile */
+    @media (max-width: 768px) {
+        .wrapper {
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar {
+            width: 100% !important;
+            border-right: none !important;
+            border-bottom: 1px solid var(--border);
+            height: auto !important;
+            flex-direction: row !important;
+            flex-wrap: wrap;
+        }
+
+        .sidebar a {
+            flex: 1 1 auto;
+            text-align: center;
+        }
+
+        .sidebar-spacer {
+            display: none !important;
+        }
+
+        .main-content {
+            padding: 1rem !important;
+        }
+    }
 
         .sidebar {
             width: 260px;
