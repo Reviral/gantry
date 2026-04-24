@@ -2,7 +2,7 @@
   "name": "Gantry Command",
   "short_name": "Gantry",
   "description": "Unified control panel for the Gantry fleet management system.",
-  "start_url": "index.workingbackup.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#0b5ed7",
