@@ -65,6 +65,7 @@
 
     /* Responsive Wrapper Patch for Mobile */
     /* --- COMPACT MOBILE GRID PATCH --- */
+    /* --- MOBILE APP GRID OPTIMIZATION --- */
     @media (max-width: 768px) {
         .wrapper {
             flex-direction: column !important;
@@ -76,30 +77,34 @@
             height: auto !important;
             border-right: none !important;
             border-bottom: 2px solid var(--border);
-            display: grid !important;
-            /* Creates 2 equal columns for the buttons */
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 6px !important;
-            padding: 10px !important;
-            background: #f1f5f9 !important;
+            display: grid !important; /* Force Grid for mobile */
+            grid-template-columns: repeat(2, 1fr); /* 2 equal columns */
+            gap: 8px !important;
+            padding: 12px !important;
+            background: #f8fafc !important;
+        }
+
+        /* Only show sidebar if it's NOT explicitly hidden by inline styles */
+        .sidebar[style*="display: none"], 
+        .sidebar[style*="display:none"] {
+            display: none !important;
         }
 
         .sidebar a {
-            padding: 10px 4px !important;
+            padding: 10px 5px !important;
             font-size: 0.8rem !important;
             text-align: center;
             background: #fff;
             border: 1px solid var(--border);
             border-radius: 8px;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            color: var(--text);
+            color: var(--text-light);
+            font-weight: 600;
         }
 
         .sidebar a.active {
             background: var(--primary) !important;
             color: #fff !important;
+            border-color: var(--primary);
         }
 
         .sidebar-spacer {
@@ -107,11 +112,12 @@
         }
 
         .main-content {
-            padding: 12px !important;
+            padding: 15px !important;
         }
 
         .card {
-            padding: 1.25rem !important;
+            padding: 1.5rem !important;
+            margin-bottom: 15px;
         }
     }
 
