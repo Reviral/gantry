@@ -6,6 +6,7 @@
     <title>Gantry | Unified Control</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="manifest" href="manifest.json">
 <script src="https://unpkg.com/@mapbox/polyline@1.1.1/src/polyline.js"></script>
     <style>
 
@@ -1620,6 +1621,13 @@ function drawRouteOnMap(route) {
     });
 
     plannerMap.fitBounds(window.currentRouteLayer.getBounds());
+}
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('Gantry Service Worker Registered'))
+      .catch(err => console.log('Service Worker Error', err));
+  });
 }
     </script>
 </body>
