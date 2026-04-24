@@ -65,19 +65,17 @@
 
     /* Responsive Wrapper Patch for Mobile */
     @media (max-width: 768px) {
-        .wrapper {
-            flex-direction: column;
-            overflow-y: auto;
-        }
+    .sidebar {
+        padding: 0.5rem !important; /* Thinner padding */
+        gap: 0.25rem !important;
+        justify-content: center;
+    }
 
-        .sidebar {
-            width: 100% !important;
-            border-right: none !important;
-            border-bottom: 1px solid var(--border);
-            height: auto !important;
-            flex-direction: row !important;
-            flex-wrap: wrap;
-        }
+    .sidebar a {
+        padding: 0.5rem 0.75rem !important; /* Smaller buttons */
+        font-size: 0.8rem !important;       /* Smaller text */
+        white-space: nowrap;                /* Stop text wrapping */
+    }
 
         .sidebar a {
             flex: 1 1 auto;
