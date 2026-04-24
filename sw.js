@@ -1,6 +1,6 @@
-const CACHE_NAME = 'gantry-v2'; // Changed version to force a refresh
+const CACHE_NAME = 'gantry-v4'; // New version forces the phone to update
 const ASSETS = [
-  './index.workingbackup.html',
+  './index.html',
   './manifest.json',
   './gantry-icon-192.png',
   './gantry-icon-512.png'
