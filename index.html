@@ -64,32 +64,52 @@
         }
 
     /* Responsive Wrapper Patch for Mobile */
-    @media (max-width: 768px) {
+ /* --- COMPACT MOBILE HEADER PATCH --- */
+@media (max-width: 768px) {
+    .wrapper {
+        flex-direction: column !important; /* Force content below nav */
+        overflow-y: auto;
+    }
+
     .sidebar {
-        padding: 0.5rem !important; /* Thinner padding */
-        gap: 0.25rem !important;
-        justify-content: center;
+        width: 100% !important;
+        height: auto !important;
+        border-right: none !important;
+        border-bottom: 2px solid var(--border);
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for links */
+        gap: 4px !important;
+        padding: 6px !important;
+        background: #f1f5f9 !important; /* Subtle contrast for nav area */
     }
 
     .sidebar a {
-        padding: 0.5rem 0.75rem !important; /* Smaller buttons */
-        font-size: 0.8rem !important;       /* Smaller text */
-        white-space: nowrap;                /* Stop text wrapping */
+        padding: 8px 4px !important;
+        font-size: 0.75rem !important; /* Smaller text for fit */
+        text-align: center;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 6px;
     }
 
-        .sidebar a {
-            flex: 1 1 auto;
-            text-align: center;
-        }
-
-        .sidebar-spacer {
-            display: none !important;
-        }
-
-        .main-content {
-            padding: 1rem !important;
-        }
+    .sidebar a.active {
+        background: var(--primary) !important;
+        color: #fff !important;
     }
+
+    .sidebar-spacer {
+        display: none !important;
+    }
+
+    .main-content {
+        padding: 10px !important;
+        flex: none !important; /* Prevent content from shrinking */
+    }
+
+    .card {
+        padding: 1rem !important; /* Save space inside cards */
+    }
+}
 
         .sidebar {
             width: 260px;
