@@ -64,24 +64,42 @@
         }
 
     /* Responsive Wrapper Patch for Mobile */
+    /* --- COMPACT MOBILE GRID PATCH --- */
     @media (max-width: 768px) {
         .wrapper {
-            flex-direction: column;
+            flex-direction: column !important;
             overflow-y: auto;
         }
 
         .sidebar {
             width: 100% !important;
-            border-right: none !important;
-            border-bottom: 1px solid var(--border);
             height: auto !important;
-            flex-direction: row !important;
-            flex-wrap: wrap;
+            border-right: none !important;
+            border-bottom: 2px solid var(--border);
+            display: grid !important;
+            /* Creates 2 equal columns for the buttons */
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 6px !important;
+            padding: 10px !important;
+            background: #f1f5f9 !important;
         }
 
         .sidebar a {
-            flex: 1 1 auto;
+            padding: 10px 4px !important;
+            font-size: 0.8rem !important;
             text-align: center;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+        }
+
+        .sidebar a.active {
+            background: var(--primary) !important;
+            color: #fff !important;
         }
 
         .sidebar-spacer {
@@ -89,7 +107,11 @@
         }
 
         .main-content {
-            padding: 1rem !important;
+            padding: 12px !important;
+        }
+
+        .card {
+            padding: 1.25rem !important;
         }
     }
 
