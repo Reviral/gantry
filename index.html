@@ -8,7 +8,6 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="manifest" href="manifest.json">
     <script src="https://unpkg.com/@mapbox/polyline@1.1.1/src/polyline.js"></script>
-    <button id="manual-install" style="display:none;" class="btn btn-warning btn-sm">Install App</button>
     <style>
 
 
@@ -494,6 +493,7 @@
         <aside class="sidebar" id="adminSidebar" style="display:none">
             <a id="nav-fleet">Fleet Management</a>
             <a id="nav-route-planner">Route Planner</a>
+            <a id="nav-parts-db">Parts DB</a>
             <a id="nav-triage-log">Service History</a>
             <a id="nav-timesheets">Hours & Mileage</a>
             <a id="nav-status-board">Global Status Board</a>
@@ -607,6 +607,33 @@
                     </div>
                 </section>
 
+                <!-- PARTS DB -->
+                <section id="view-parts-db" style="display:none">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Parts Database</h2>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <input type="text" id="partsSearch" class="search-input" placeholder="Search parts...">
+                                <button id="btn-add-part" class="btn btn-success btn-sm">+[...] Add Part</button>
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        
+                                        <th>ITEM NAME</th>
+                                        <th>MIN STOCK</th>
+                                        <th>QUANTITY</th>
+                                        <th style="text-align:right;">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="parts-db-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- TIMESHEETS -->
                 <section id="view-timesheets" style="display:none">
                     <div class="card">
@@ -715,7 +742,9 @@
                 LOW_STOCK: "/webhook/6434129a-29dc-4916-bf91-7575e299fa22",
                 TRIAGE_LOG: "/webhook/d93e66d1-269d-431f-b8ac-46baf509a81b",
                 TIMESHEET: "/webhook/3bd5686b-51b7-4ca1-8d9b-72847cd71de0",
-                SAVE_ROUTE: "/webhook/b52d7f78-653c-4b06-a6ff-ac24e275b27a" /* TODO: Update with your n8n webhook ID */
+                SAVE_ROUTE: "/webhook/b52d7f78-653c-4b06-a6ff-ac24e275b27a", /* TODO: Update with your n8n webhook ID */
+                PARTS_GET: "/webhook/156cf8d3-c7f3-474f-a172-f91cd0f99920",
+                PARTS_MUTATE: "/webhook/993b0abf-1643-45e6-ac26-44241b06572d"
             }
         };
 
@@ -725,7 +754,7 @@
         let plannerMap = null; // Global map reference for planner
 
         const AppState = {
-            data: { vans: [] },
+            data: { vans: [], parts: [] },
             activeVan: null,
             activeDriver: "",
             isAdmin: false,
@@ -746,7 +775,7 @@
                 this.activeVan = null;
                 this.activeDriver = "";
                 this.isAdmin = false;
-                this.data = { vans: [] };
+                this.data = { vans: [], parts: [] };
             }
         };
 
@@ -1026,6 +1055,127 @@
             if (result.ok) {
                 alert("✓ Driver Removed");
                 refreshData();
+            } else {
+                alert(`❌ Delete Failed: ${result.error}`);
+            }
+        }
+
+        // ============================================
+        // PARTS DB MANAGEMENT
+        // ============================================
+
+        async function fetchPartsDB() {
+            const body = document.getElementById('parts-db-body');
+            if (!body) return;
+
+            body.innerHTML = '<tr><td colspan="5" style="text-align:center;">Loading...</td></tr>';
+
+            try {
+                const response = await fetch(`${CONFIG.API_BASE}${CONFIG.ENDPOINTS.PARTS_GET}`, {
+                    headers: { 'ngrok-skip-browser-warning': 'true' }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch parts');
+
+                const data = await response.json();
+                AppState.data.parts = Array.isArray(data) ? data : (data.items || []);
+                renderPartsDB();
+            } catch (error) {
+                log(`Error fetching parts: ${error.message}`);
+                body.innerHTML = '<tr><td colspan="5" style="text-align:center;">Error loading parts.</td></tr>';
+            }
+        }
+
+        function renderPartsDB() {
+            const body = document.getElementById('parts-db-body');
+            if (!body) return;
+            body.innerHTML = '';
+
+            if (!AppState.data.parts || AppState.data.parts.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" style="text-align:center;">No parts found.</td></tr>';
+                return;
+            }
+
+            // Updated renderPartsDB logic
+            AppState.data.parts.forEach(part => {
+                const tr = document.createElement('tr');
+
+                // We keep the variables for functionality, but remove them from the HTML view
+                const id = part.id;
+                const itemName = sanitize(part.item_name || '');
+                const minStock = sanitize(part.min_stock || '0');
+                const unit = sanitize(part.unit || '0');
+
+                // NOTICE: I removed the <td>${id}</td> line below
+                tr.innerHTML = `
+        <td style="font-weight:600;">${itemName}</td>
+        <td>${minStock}</td>
+        <td>${unit}</td>
+        <td style="text-align:right;">
+            <button class="icon-btn" onclick="openPartModal('${id}')">✏️</button>
+            <button class="icon-btn" onclick="deletePart('${id}')">🗑️</button>
+        </td>
+    `;
+                body.appendChild(tr);
+            });
+        }
+
+        async function openPartModal(existingId = null) {
+            let part = {
+                id: "",
+                "Item Name": "",
+                "Min Stock": "0",
+                "Quantity": "0"
+            };
+            let type = "add_part";
+
+            if (existingId) {
+                const found = AppState.data.parts.find(p => String(p.id) === String(existingId));
+                if (found) {
+                    part = found;
+                    type = "edit_part";
+                }
+            }
+
+            const itemName = prompt("Item Name:", part["Item Name"]);
+            if (itemName === null) return;
+
+            const minStock = prompt("Min Stock:", part["Min Stock"]);
+            if (minStock === null) return;
+
+            const qty = prompt("Quantity:", part["Quantity"]);
+            if (qty === null) return;
+
+            log("Syncing Part Change...");
+
+            // Inside your openPartModal function, change this:
+            const payload = {
+                type: type,
+                id: existingId,
+                data: {
+                    "item_name": itemName, // Matches your DB column
+                    "min_stock": minStock, // Matches your DB column
+                    "unit": qty            // Matches your DB column
+                }
+            };
+
+            const result = await api(payload, CONFIG.ENDPOINTS.PARTS_MUTATE);
+            if (result.ok) {
+                alert("✓ Part Saved");
+                fetchPartsDB();
+            } else {
+                alert(`❌ Save Failed: ${result.error}`);
+            }
+        }
+
+        async function deletePart(id) {
+            if (!confirm(`Permanently delete part ${id}?`)) return;
+            log(`Deleting part ${id}...`);
+
+            const result = await api({ type: "delete_part", id: id }, CONFIG.ENDPOINTS.PARTS_MUTATE);
+            if (result.ok) {
+                alert("✓ Part Deleted");
+                fetchPartsDB();
             } else {
                 alert(`❌ Delete Failed: ${result.error}`);
             }
@@ -1345,6 +1495,15 @@
             document.getElementById('nav-timesheets')?.addEventListener('click', async () => {
                 await fetchTimesheets();
                 showSection('view-timesheets');
+            });
+
+            document.getElementById('nav-parts-db')?.addEventListener('click', async () => {
+                await fetchPartsDB();
+                showSection('view-parts-db');
+            });
+
+            document.getElementById('btn-add-part')?.addEventListener('click', () => {
+                openPartModal();
             });
 
             document.getElementById('nav-status-board')?.addEventListener('click', () => {
@@ -1677,6 +1836,7 @@
             // Table filters
             setupTableFilter('fleetSearch', 'fleet-registry-body');
             setupTableFilter('timeSearch', 'timesheet-log-body');
+            setupTableFilter('partsSearch', 'parts-db-body');
         }
 
         // ============================================
@@ -1736,28 +1896,6 @@
                     .catch(err => console.log('Service Worker Error', err));
             });
         }
-
-        let deferredPrompt;
-        const installBtn = document.getElementById('manual-install');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent Chrome from showing its own tiny prompt
-            e.preventDefault();
-            deferredPrompt = e;
-            // Show our own "Install App" button instead
-            installBtn.style.display = 'block';
-
-            installBtn.addEventListener('click', () => {
-                installBtn.style.display = 'none';
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User accepted the Gantry install');
-                    }
-                    deferredPrompt = null;
-                });
-            });
-        });
     </script>
 </body>
 </html>
