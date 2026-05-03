@@ -480,6 +480,14 @@
             #planner-map {
                 display: none !important;
             }
+            
+        }
+             /* Ruled lines for the job input area */
+        #job-input-list {
+            line-height: 28px;
+            padding: 6px 12px;
+            background-image: repeating-linear-gradient(transparent, transparent 27px, #e2e8f0 27px, #e2e8f0 28px);
+            background-attachment: local;
         }
     </style>
 </head>
@@ -621,7 +629,7 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        
+
                                         <th>ITEM NAME</th>
                                         <th>MIN STOCK</th>
                                         <th>QUANTITY</th>
@@ -699,11 +707,18 @@
                     <div class="card">
                         <div class="card-header"><h2>Route Planner & Dispatch</h2></div>
                         <div class="card-body">
-                            <label>Select Driver/Van:</label>
-                            <select id="plan-vanId" class="input-field"></select>
+                            <label>Select Starting Point (or leave blank for Manual):</label>
+                            <select id="plan-vanId" class="input-field">
+                                <option value="">-- Manual Start Address --</option>
+                            </select>
 
-                            <label>Paste Job List (Name, Address, Type):</label>
-                            <textarea id="job-input-list" placeholder="John Doe, 123 High St BD21, Install..." rows="8"></textarea>
+                            <div id="manual-start-group" class="form-group" style="display:none;">
+                                <label>Manual Start Address:</label>
+                                <input type="text" id="manual-start-address" placeholder="e.g. 10 High St, BD21">
+                            </div>
+
+                            <label>Enter Jobs (One address per line, Max 10):</label>
+<textarea id="job-input-list" placeholder="123 High St, BD21&#10;456 Main Rd, LS1&#10;..." rows="10"></textarea>
 
                             <button id="btn-calculate-route" class="btn btn-primary">1. Filter & Optimize Route</button>
                         </div>
@@ -868,9 +883,21 @@
             </thead>
             <tbody>`;
 
+            // NEW: Add Start Point
+            const startAddress = route.legs[0].start_address;
+            const startTime = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            html += `<tr>
+                <td><strong>Start</strong></td>
+                <td><strong>${startTime}</strong></td>
+                <td>${startAddress.split(',')[0]} <br><small>${startAddress}</small></td>
+                <td>-</td>
+            </tr>`;
+
             route.legs.forEach((leg, index) => {
-                // Add travel time to current clock
+                // Add travel time to current clock FIRST before logging arrival
                 const travelMinutes = Math.round(leg.duration.value / 60);
+                currentTime.setMinutes(currentTime.getMinutes() + travelMinutes);
+
                 const arrivalTime = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                 html += `<tr>
@@ -880,8 +907,8 @@
                 <td>${leg.distance.text} (${leg.duration.text})</td>
             </tr>`;
 
-                // Update clock: Travel Time + 60 mins for the job itself
-                currentTime.setMinutes(currentTime.getMinutes() + travelMinutes + 60);
+                // Update clock: 60 mins for the job itself
+                currentTime.setMinutes(currentTime.getMinutes() + 60);
                 totalMiles += leg.distance.value;
             });
 
@@ -1245,13 +1272,17 @@
 
             // NEW: Populate Route Planner Select
             if (plV) {
-                plV.innerHTML = '<option value="">-- Select Van --</option>';
+                plV.innerHTML = '<option value="">-- Manual Start Address --</option>';
                 AppState.data.vans.forEach(v => {
                     if (v['Van ID']) {
                         const name = `${sanitize(v['Van ID'])} | ${sanitize(v['Driver Name'])}`;
                         plV.add(new Option(name, v['Van ID']));
                     }
                 });
+                const manualGroup = document.getElementById('manual-start-group');
+                if (manualGroup) {
+                    manualGroup.style.display = plV.value === '' ? 'block' : 'none';
+                }
             }
         }
 
@@ -1567,81 +1598,87 @@
             });
 
             // --- ROUTE PLANNER HANDLERS ---
-            document.getElementById('btn-calculate-route')?.addEventListener('click', async () => {
-                const btn = document.getElementById('btn-calculate-route');
-                const vanId = document.getElementById('plan-vanId').value;
-                const rawJobs = document.getElementById('job-input-list').value;
+            // 1. Toggle Manual Start logic
+document.getElementById('plan-vanId').addEventListener('change', (e) => {
+    const manualGroup = document.getElementById('manual-start-group');
+    manualGroup.style.display = e.target.value ? 'none' : 'block';
+});
 
-                // Parse jobs to get customer names for later; store them globally.
-                AppState.originalJobs = rawJobs.split('\n').filter(line => line.trim() !== '').map(line => {
-                    const parts = line.split(',');
-                    return {
-                        customer: (parts[0] || '').trim(),
-                        address: (parts[1] || '').trim()
-                    };
-                });
+// 2. Optimized Route Calculation
+document.getElementById('btn-calculate-route')?.addEventListener('click', async () => {
+    const btn = document.getElementById('btn-calculate-route');
+    const vanId = document.getElementById('plan-vanId').value;
+    const manualStart = document.getElementById('manual-start-address').value.trim();
+    const rawJobs = document.getElementById('job-input-list').value;
 
-                if (!vanId || AppState.originalJobs.length === 0) {
-                    alert("Please select a Van and paste your job list.");
-                    return;
-                }
+    // Split by new line, remove empty lines
+    const addressLines = rawJobs.split('\n')
+                                .map(line => line.trim())
+                                .filter(line => line.length > 0);
 
-                btn.disabled = true;
-                btn.textContent = "Gantry calculating... Please wait.";
+    // Validation
+    if (addressLines.length > 10) {
+        alert("Maximum 10 addresses allowed.");
+        return;
+    }
+    if (addressLines.length === 0 || (!vanId && !manualStart)) {
+        alert("Please provide addresses and a starting point.");
+        return;
+    }
 
-                try {
-                    const response = await fetch("https://decimeter-easeful-replica.ngrok-free.dev/webhook/42f2d420-c7ab-463e-9351-2e5fd9ffdf46", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'ngrok-skip-browser-warning': 'true'
-                        },
-                        body: JSON.stringify({ vanId: vanId, jobs: rawJobs })
-                    });
+    // Store jobs in state for saving later
+    AppState.originalJobs = addressLines.map((line, index) => {
+        return {
+            customer: `Job ${index + 1}`,
+            address: line
+        };
+    });
 
+    btn.disabled = true;
+    btn.textContent = "Calculating...";
 
-                    if (!response.ok) throw new Error("Gantry cannot reach n8n.");
+    try {
+        const response = await fetch("https://decimeter-easeful-replica.ngrok-free.dev/webhook/42f2d420-c7ab-463e-9351-2e5fd9ffdf46", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+            body: JSON.stringify({
+                vanId: vanId,
+                manualStart: manualStart,
+                addresses: addressLines // Send as a clean array
+            })
+        });
 
-                    const data = await response.json();
-                    // n8n sends an array, we want the first result
-                    const result = Array.isArray(data) ? data[0] : data;
+        if (!response.ok) throw new Error("n8n failed to respond");
 
-                    if (result?.routes?.[0]) {
-                        // Save route globally for printing/saving
-                        AppState.currentRoute = result.routes[0];
+        const data = await response.json();
+        const result = Array.isArray(data) ? data[0] : data;
 
-                        // Show the results section
-                        document.getElementById('optimized-plan-results').style.display = 'block';
+        if (result?.routes?.[0]) {
+            AppState.currentRoute = result.routes[0];
+            document.getElementById('optimized-plan-results').style.display = 'block';
 
-                        // 1. Wake up the map (fixes the 'small map' bug)
-                        if (plannerMap) plannerMap.invalidateSize();
-
-                        // 2. Fill the table with times
-                        displayRouteResults(result.routes[0]);
-
-                        // 3. Draw the line AND the Markers
-                        drawRouteOnMap(result.routes[0]);
-
-                        log("Success: Route and Waypoints rendered.");
-                    } else {
-                        alert("n8n responded, but Google couldn't find a route. Check your addresses!");
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert("Connection lost. Is ngrok running with the --url flag?");
-                } finally {
-                    btn.disabled = false;
-                    btn.textContent = "1. Filter & Optimize Route";
-                }
-            });
+            if (plannerMap) plannerMap.invalidateSize();
+            displayRouteResults(result.routes[0]);
+            drawRouteOnMap(result.routes[0]);
+        } else {
+            alert("No route found. Check addresses.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Connection failed.");
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "1. Filter & Optimize Route";
+    }
+});
 
             document.getElementById('btn-save-route')?.addEventListener('click', async () => {
                 const btn = document.getElementById('btn-save-route');
                 const vanId = document.getElementById('plan-vanId').value;
                 const route = AppState.currentRoute;
 
-                if (!route || !vanId) {
-                    alert("No optimized route or Van selected to save.");
+                if (!route) {
+                    alert("No optimized route to save.");
                     return;
                 }
 
@@ -1661,13 +1698,18 @@
                         distance: leg.distance.text
                     };
                 });
-
+ // Prepend the Start Address to the saved list
+    newLegs.unshift({
+        customer: 'Start',
+        address: route.legs[0].start_address,
+        distance: '0 mi'
+    });
                 // Calculate total distance in miles for the log.
                 const totalMiles = route.legs.reduce((total, leg) => total + leg.distance.value, 0) / 1609.34;
 
                 // This payload structure matches your n8n code node.
                 const payload = {
-                    vanId: vanId,
+                    vanId: vanId || 'Manual Route',
                     summary: route.summary,
                     total_miles: totalMiles.toFixed(1),
                     legs: newLegs
@@ -1896,6 +1938,15 @@
                     .catch(err => console.log('Service Worker Error', err));
             });
         }
+        // Add this to your <script> section, outside of any other functions
+function toggleManualStart(value) {
+    const manualGroup = document.getElementById('manual-start-group');
+    if (value === "") {
+        manualGroup.style.display = 'block'; // Show if nothing is selected
+    } else {
+        manualGroup.style.display = 'none';  // Hide if a Van is selected
+    }
+}
     </script>
 </body>
 </html>
