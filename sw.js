@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gantry-v13'; // New version forces the phone to update
+const CACHE_NAME = 'gantry-v14'; // New version forces the phone to update
 const ASSETS = [
   './index.html',
   './manifest.json',
