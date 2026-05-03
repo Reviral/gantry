@@ -720,6 +720,11 @@
                             <label>Enter Jobs (One address per line, Max 10):</label>
 <textarea id="job-input-list" placeholder="123 High St, BD21&#10;456 Main Rd, LS1&#10;..." rows="10"></textarea>
 
+                            <div style="display: flex; align-items: center; gap: 10px; margin-top: 1rem; margin-bottom: 1rem;">
+                                <input type="checkbox" id="plan-furthest-first" style="width: auto; height: auto;">
+                                <label for="plan-furthest-first" style="margin-bottom: 0; font-weight: 500;">Set furthest address as first job</label>
+                            </div>
+
                             <button id="btn-calculate-route" class="btn btn-primary">1. Filter & Optimize Route</button>
                         </div>
                     </div>
@@ -1610,6 +1615,7 @@ document.getElementById('btn-calculate-route')?.addEventListener('click', async 
     const vanId = document.getElementById('plan-vanId').value;
     const manualStart = document.getElementById('manual-start-address').value.trim();
     const rawJobs = document.getElementById('job-input-list').value;
+    const furthestFirst = document.getElementById('plan-furthest-first').checked;
 
     // Split by new line, remove empty lines
     const addressLines = rawJobs.split('\n')
@@ -1644,7 +1650,8 @@ document.getElementById('btn-calculate-route')?.addEventListener('click', async 
             body: JSON.stringify({
                 vanId: vanId,
                 manualStart: manualStart,
-                addresses: addressLines // Send as a clean array
+                addresses: addressLines, // Send as a clean array
+                furthestFirst: furthestFirst
             })
         });
 
